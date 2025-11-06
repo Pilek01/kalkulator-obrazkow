@@ -365,6 +365,19 @@
                 grid-template-columns: 1fr;
             }
 
+.footer {
+    text-align: center;
+    padding: 2rem 1rem 1rem 1rem;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+.footer:hover {
+    opacity: 0.6;
+}
+            
             .header-content {
                 flex-direction: column;
                 text-align: center;
@@ -372,6 +385,9 @@
         }
     </style>
 </head>
+    <div class="footer">
+    Made by Kamil Matysek
+</div>
 <body>
     <div class="header">
         <div class="header-content">
@@ -379,7 +395,7 @@
             <div class="controls-wrapper">
                  <div class="language-selector">
                     <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
-                    <span onclick="setLanguage('uk')" class="lang-flag" data-lang="uk" title="Українська">🇺🇦</span>
+                    <span onclick="setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
                     <span onclick="setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
                 </div>
                 <button class="theme-toggle" onclick="toggleHelp()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;">
