@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Obrazków - SENTREX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent: #ff6b35;
+            --accent-hover: #ff8555;
+            --border: #404040;
+            --success: #4caf50;
+            --danger: #f44336;
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border: #cccccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 3px solid var(--accent);
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .calculator-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 2px solid var(--border);
+        }
+
+        .calculator-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            transition: border-color 0.3s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, var(--accent) 0%, #ff8555 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .result-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 4rem;
+            font-weight: 900;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .result-unit {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--accent);
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            border-color: var(--text-secondary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .history-section {
+            margin-top: 3rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .history-item {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .history-item-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .history-item-delete {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .history-item-delete:hover {
+            background: #d32f2f;
+            transform: scale(1.05);
+        }
+
+        .history-item-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .history-data-item {
+            color: var(--text-secondary);
+        }
+
+        .history-data-item strong {
+            color: var(--text-primary);
+        }
+
+        .history-result {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 0.5rem;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .info-box {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .info-box h3 {
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-value {
+                font-size: 3rem;
+            }
+
+            .history-item-data {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="title">📊 Kalkulator Obrazków - SENTREX</div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="theme-toggle" onclick="toggleHelp()" title="Pokaż pomoc" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    ❓ Jak to działa?
+                </button>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Zmień motyw">🌓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROZSUWANE INFO -->
+    <div id="helpBox" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
+        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
+            <h3 style="color: var(--accent); margin-bottom: 0.8rem;">ℹ️ Jak to działa?</h3>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Wałek (Sleeve):</strong> Długość sleeve'a w centymetrach (np. 59cm)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="calculator-card">
+            <div class="calculator-header">Oblicz liczbę obrazków</div>
+            
+            <form id="calculatorForm" onsubmit="calculate(event)">
+                <!-- KONFIGURACJA W JEDNEJ LINII - ustawia się raz na zmianę -->
+                <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;">
+                        ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="walek" style="font-size: 0.9rem;">🔧 Wałek (cm)</label>
+                            <input 
+                                type="number" 
+                                id="walek" 
+                                name="walek" 
+                                step="0.1" 
+                                required 
+                                placeholder="59.0"
+                                style="font-size: 1rem; padding: 0.7rem;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="motywy" style="font-size: 0.9rem;">🎨 Motywy</label>
+                            <input 
+                                type="number" 
+                                id="motywy" 
+                                name="motywy" 
+                                step="1" 
+                                required 
+                                placeholder="2"
+                                min="1"
+                                style="font-size: 1rem; padding: 0.7rem;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="rolki" style="font-size: 0.9rem;">🔪 Rolek</label>
+                            <input 
+                                type="number" 
+                                id="rolki" 
+                                name="rolki" 
+                                step="1" 
+                                min="1"
+                                value="1"
+                                placeholder="1"
+                                style="font-size: 1rem; padding: 0.7rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DUŻE POLE - METRY (najczęściej używane) -->
+                <div class="form-group">
+                    <label for="metry">📏 Metry (m)</label>
+                    <input 
+                        type="number" 
+                        id="metry" 
+                        name="metry" 
+                        step="0.01" 
+                        required 
+                        placeholder="6289"
+                        autofocus
+                        style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none;">
+                        <input 
+                            type="checkbox" 
+                            id="zaokraglaj" 
+                            name="zaokraglaj"
+                            style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
+                        <span style="font-size: 1rem;">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
+                    </label>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;">
+                        Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
+                    </p>
+                </div>
+
+                <div id="resultBox" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
+                    <div class="result-label">Wynik - 1 rolka</div>
+                    <div class="result-value" id="resultValue">0</div>
+                    <div class="result-unit">Obrazków</div>
+                    <div id="resultDetails" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
+                    
+                    <!-- MAŁA INFO O ROLKACH -->
+                    <div id="resultTotal" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; display: none;">
+                        <span id="resultTotalText"></span>
+                    </div>
+                    
+                    <!-- PRZYCISK KOPIUJ -->
+                    <button type="button" class="btn" onclick="copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
+                        📋 Skopiuj wynik (format systemu)
+                    </button>
+                </div>
+
+                <button type="submit" class="btn">🔢 Oblicz</button>
+            </form>
+        </div>
+
+        <div class="history-section">
+            <!-- STATYSTYKI -->
+            <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📊 Dzisiaj obliczeń</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statToday">0</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">🎯 Łącznie obrazków</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotal">0</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📏 Średnia rolka</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvg">0 m</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-header">
+                <div class="history-title">📜 Historia obliczeń</div>
+                <button class="btn btn-danger" onclick="clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
+                    🗑️ Wyczyść historię
+                </button>
+            </div>
+
+            <div id="historyContainer">
+                <div class="empty-history">
+                    Brak historii obliczeń. Wykonaj pierwsze obliczenie!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+
+        // Wczytaj historię z localStorage przy starcie
+        function loadHistory() {
+            const saved = localStorage.getItem('obrazki_history');
+            if (saved) {
+                try {
+                    history = JSON.parse(saved);
+                    renderHistory();
+                } catch (e) {
+                    console.error('Błąd wczytywania historii:', e);
+                    history = [];
+                }
+            }
+        }
+
+        // Zapisz historię do localStorage
+        function saveHistory() {
+            localStorage.setItem('obrazki_history', JSON.stringify(history));
+        }
+
+        // Zmienna globalna dla ostatniego wyniku (do kopiowania)
+        let lastResult = 0;
+
+        // Oblicz liczbę obrazków
+        function calculate(event) {
+            event.preventDefault();
+
+            const metry = parseFloat(document.getElementById('metry').value);
+            const walek = parseFloat(document.getElementById('walek').value);
+            const motywy = parseInt(document.getElementById('motywy').value);
+            const zaokraglaj = document.getElementById('zaokraglaj').checked;
+            const rolki = parseInt(document.getElementById('rolki').value) || 1;
+
+            // Formuła: ((metry / wałek) * 100) * motywy
+            const wynikDokładny = Math.floor(((metry / walek) * 100) * motywy);
+            let wynikKońcowy = wynikDokładny;
+            let zaokraglono = false;
+
+            // Jeśli zaokrąglanie włączone
+            if (zaokraglaj) {
+                // Zaokrąglij do pełnej setki, ale dodaj minimum 100, maksimum 200
+                const reszta = wynikDokładny % 100;
+                let doNajbliższejSetki = 0;
+                
+                if (reszta === 0) {
+                    // Już jest pełną setką - dodaj 200
+                    doNajbliższejSetki = 200;
+                } else {
+                    // Oblicz ile do najbliższej setki
+                    doNajbliższejSetki = 100 - reszta;
+                    
+                    // Jeśli dodanie do najbliższej setki to mniej niż 100, dodaj jeszcze jedną setkę
+                    if (doNajbliższejSetki < 100) {
+                        doNajbliższejSetki += 100;
+                    }
+                }
+                
+                wynikKońcowy = wynikDokładny + doNajbliższejSetki;
+                zaokraglono = true;
+            }
+
+            // Zapisz dla funkcji kopiowania
+            lastResult = wynikKońcowy;
+
+            // Oblicz łączną ilość z wszystkich rolek
+            const wynikLacznie = wynikKońcowy * rolki;
+
+            // Pokaż wynik z animacją
+            const resultBox = document.getElementById('resultBox');
+            const resultValue = document.getElementById('resultValue');
+            const resultDetails = document.getElementById('resultDetails');
+            const resultTotal = document.getElementById('resultTotal');
+            const resultTotalValue = document.getElementById('resultTotalValue');
+            const resultTotalInfo = document.getElementById('resultTotalInfo');
+            
+            resultBox.style.display = 'block';
+            resultValue.style.transform = 'scale(0)';
+            resultValue.textContent = wynikKońcowy.toLocaleString('pl-PL');
+            
+            // Pokaż szczegóły zaokrąglenia
+            if (zaokraglono) {
+                const roznica = wynikKońcowy - wynikDokładny;
+                resultDetails.innerHTML = `📊 Dokładny wynik: ${wynikDokładny.toLocaleString('pl-PL')} (+${roznica} obrazków)`;
+            } else {
+                resultDetails.innerHTML = '';
+            }
+
+            // Pokaż sumę z rolek (jeśli więcej niż 1 rolka)
+            if (rolki > 1) {
+                resultTotal.style.display = 'block';
+                document.getElementById('resultTotalText').textContent = 
+                    `🔪 Łącznie ${rolki} rolek: ${wynikLacznie.toLocaleString('pl-PL')} obrazków (${wynikKońcowy.toLocaleString('pl-PL')} × ${rolki})`;
+            } else {
+                resultTotal.style.display = 'none';
+            }
+            
+            setTimeout(() => {
+                resultValue.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                resultValue.style.transform = 'scale(1)';
+            }, 10);
+
+            // Dodaj do historii
+            const historyItem = {
+                id: Date.now(),
+                metry: metry,
+                walek: walek,
+                motywy: motywy,
+                rolki: rolki,
+                wynikDokładny: wynikDokładny,
+                wynikKońcowy: wynikKońcowy,
+                wynikLacznie: wynikLacznie,
+                zaokraglono: zaokraglono,
+                timestamp: new Date().toLocaleString('pl-PL', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })
+            };
+
+            history.unshift(historyItem); // Dodaj na początek
+            
+            // Ogranicz historię do 50 elementów
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+
+            saveHistory();
+            renderHistory();
+            updateStats();
+        }
+
+        // Kopiuj wynik do schowka (format systemu: 21.5 zamiast 21500)
+        function copyResult(event) {
+            const formatted = (lastResult / 1000).toFixed(1);
+            navigator.clipboard.writeText(formatted).then(() => {
+                // Zmień tekst przycisku tymczasowo
+                const btn = event ? event.target : document.querySelector('button[onclick="copyResult()"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Skopiowano: ' + formatted;
+                btn.style.background = 'rgba(76, 175, 80, 0.3)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'rgba(255,255,255,0.2)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Błąd kopiowania:', err);
+            });
+        }
+
+        // Renderuj historię
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-history">
+                        Brak historii obliczeń. Wykonaj pierwsze obliczenie!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = history.map(item => {
+                // Obsługa starych zapisów (przed dodaniem zaokrąglania/rolek)
+                const wynikDoWyswietlenia = item.wynikKońcowy || item.wynik;
+                const czyZaokraglono = item.zaokraglono || false;
+                const wynikDokładny = item.wynikDokładny || item.wynik;
+                const rolki = item.rolki || 1;
+                const wynikLacznie = item.wynikLacznie || wynikDoWyswietlenia;
+                
+                let wynikHTML = '';
+                if (czyZaokraglono) {
+                    const roznica = wynikDoWyswietlenia - wynikDokładny;
+                    wynikHTML = `
+                        <div class="history-result">
+                            ➡️ Wynik: ${wynikDoWyswietlenia.toLocaleString('pl-PL')} obrazków (1 rolka)
+                            <span style="font-size: 0.9rem; opacity: 0.7; display: block; margin-top: 0.3rem;">
+                                📈 Zaokrąglono z ${wynikDokładny.toLocaleString('pl-PL')} (+${roznica})
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    wynikHTML = `
+                        <div class="history-result">
+                            ➡️ Wynik: ${wynikDoWyswietlenia.toLocaleString('pl-PL')} obrazków (1 rolka)
+                        </div>
+                    `;
+                }
+
+                // Dodaj informację o rolkach jeśli więcej niż 1
+                if (rolki > 1) {
+                    wynikHTML += `
+                        <div style="margin-top: 0.8rem; padding: 0.8rem; background: rgba(76, 175, 80, 0.1); border-radius: 5px; border-left: 3px solid #4caf50;">
+                            <strong style="color: #4caf50;">🔪 Łącznie: ${wynikLacznie.toLocaleString('pl-PL')} obrazków</strong>
+                            <span style="font-size: 0.9rem; color: var(--text-secondary); display: block; margin-top: 0.2rem;">
+                                (${wynikDoWyswietlenia.toLocaleString('pl-PL')} × ${rolki} rolek)
+                            </span>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <div class="history-item-time">📅 ${item.timestamp}</div>
+                            <button class="history-item-delete" onclick="deleteHistoryItem(${item.id})">
+                                🗑️ Usuń
+                            </button>
+                        </div>
+                        <div class="history-item-data">
+                            <div class="history-data-item">
+                                <strong>Metry:</strong> ${item.metry.toLocaleString('pl-PL')} m
+                            </div>
+                            <div class="history-data-item">
+                                <strong>Wałek:</strong> ${item.walek} cm
+                            </div>
+                            <div class="history-data-item">
+                                <strong>Motywy:</strong> ${item.motywy}
+                            </div>
+                            ${rolki > 1 ? `<div class="history-data-item"><strong>Rolek:</strong> ${rolki}</div>` : ''}
+                        </div>
+                        ${wynikHTML}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Aktualizuj statystyki
+        function updateStats() {
+            // Dzisiejsza data (tylko dzień, miesiąc, rok)
+            const today = new Date().toLocaleDateString('pl-PL');
+            
+            // Filtruj obliczenia z dzisiaj
+            const todayCalculations = history.filter(item => {
+                const itemDate = new Date(item.timestamp.split(',')[0].split('.').reverse().join('-')).toLocaleDateString('pl-PL');
+                return itemDate === today;
+            });
+
+            // Oblicz statystyki
+            const statToday = todayCalculations.length;
+            const statTotal = history.reduce((sum, item) => sum + (item.wynikLacznie || item.wynikKońcowy || item.wynik || 0), 0);
+            const statAvg = history.length > 0 ? Math.round(history.reduce((sum, item) => sum + item.metry, 0) / history.length) : 0;
+
+            // Wyświetl statystyki
+            document.getElementById('statToday').textContent = statToday;
+            document.getElementById('statTotal').textContent = statTotal.toLocaleString('pl-PL');
+            document.getElementById('statAvg').textContent = statAvg.toLocaleString('pl-PL') + ' m';
+        }
+
+        // Usuń pojedynczy element z historii
+        function deleteHistoryItem(id) {
+            if (confirm('Czy na pewno chcesz usunąć to obliczenie z historii?')) {
+                history = history.filter(item => item.id !== id);
+                saveHistory();
+                renderHistory();
+                updateStats();
+            }
+        }
+
+        // Wyczyść całą historię
+        function clearHistory() {
+            if (history.length === 0) {
+                alert('Historia jest już pusta!');
+                return;
+            }
+
+            if (confirm(`Czy na pewno chcesz usunąć całą historię (${history.length} obliczeń)?`)) {
+                history = [];
+                saveHistory();
+                renderHistory();
+                updateStats();
+                
+                // Ukryj wynik
+                document.getElementById('resultBox').style.display = 'none';
+                
+                // Wyczyść formularz
+                document.getElementById('calculatorForm').reset();
+                document.getElementById('rolki').value = 1; // Przywróć domyślną wartość rolek
+            }
+        }
+
+        // Pokaż/ukryj pomoc
+        function toggleHelp() {
+            const helpBox = document.getElementById('helpBox');
+            if (helpBox.style.display === 'none' || helpBox.style.display === '') {
+                helpBox.style.display = 'block';
+                helpBox.style.animation = 'slideIn 0.3s';
+            } else {
+                helpBox.style.display = 'none';
+            }
+        }
+
+        // Zmiana motywu
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        // Wczytaj zapisany motyw
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        }
+
+        // Inicjalizacja
+        loadTheme();
+        loadHistory();
+        updateStats();
+    </script>
+</body>
+</html>
