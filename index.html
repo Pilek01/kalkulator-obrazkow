@@ -39,6 +39,12 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content-wrapper {
+            flex: 1;
         }
 
         .header {
@@ -352,6 +358,14 @@
             margin: 0.5rem 0;
         }
 
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
         @media (max-width: 768px) {
             .input-grid {
                 grid-template-columns: 1fr;
@@ -365,19 +379,6 @@
                 grid-template-columns: 1fr;
             }
 
-.footer {
-    text-align: center;
-    padding: 2rem 1rem 1rem 1rem;
-    color: var(--text-secondary);
-    font-size: 0.7rem;
-    opacity: 0.3;
-    transition: opacity 0.3s;
-}
-
-.footer:hover {
-    opacity: 0.6;
-}
-            
             .header-content {
                 flex-direction: column;
                 text-align: center;
@@ -385,175 +386,177 @@
         }
     </style>
 </head>
-    <div class="footer">
-    Made by Kamil Matysek
-</div>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.0</div>
-            <div class="controls-wrapper">
-                 <div class="language-selector">
-                    <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
-                    <span onclick="setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
-                    <span onclick="setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
+    <div class="content-wrapper">
+        <div class="header">
+            <div class="header-content">
+                <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.2</div>
+                <div class="controls-wrapper">
+                     <div class="language-selector">
+                        <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
+                        <span onclick="setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
+                        <span onclick="setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
+                    </div>
+                    <button class="theme-toggle" onclick="toggleHelp()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <span data-translate-key="help_button">❓ Jak to działa?</span>
+                    </button>
+                    <button class="theme-toggle" onclick="toggleTheme()" data-translate-title-key="theme_toggle_title" title="Zmień motyw">🌓</button>
                 </div>
-                <button class="theme-toggle" onclick="toggleHelp()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                    <span data-translate-key="help_button">❓ Jak to działa?</span>
-                </button>
-                <button class="theme-toggle" onclick="toggleTheme()" data-translate-title-key="theme_toggle_title" title="Zmień motyw">🌓</button>
             </div>
         </div>
-    </div>
 
-    <!-- ROZSUWANE INFO -->
-    <div id="helpBox" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
-        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
-            <h3 style="color: var(--accent); margin-bottom: 0.8rem;" data-translate-key="help_box_title">ℹ️ Jak to działa?</h3>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_meters"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_sleeve"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_motifs"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_formula"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+        <!-- ROZSUWANE INFO -->
+        <div id="helpBox" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
+            <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
+                <h3 style="color: var(--accent); margin-bottom: 0.8rem;" data-translate-key="help_box_title">ℹ️ Jak to działa?</h3>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_meters"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_sleeve"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_motifs"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_formula"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+            </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="calculator-card">
-            <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
-            
-            <form id="calculatorForm" onsubmit="calculate(event)">
-                <!-- KONFIGURACJA W JEDNEJ LINII - ustawia się raz na zmianę -->
-                <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
-                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
-                        ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+        <div class="container">
+            <div class="calculator-card">
+                <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
+                
+                <form id="calculatorForm" onsubmit="calculate(event)">
+                    <!-- KONFIGURACJA W JEDNEJ LINII - ustawia się raz na zmianę -->
+                    <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
+                            ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="walek" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
+                                <input 
+                                    type="number" 
+                                    id="walek" 
+                                    name="walek" 
+                                    step="0.1" 
+                                    required
+                                    data-translate-placeholder-key="sleeve_placeholder"
+                                    placeholder="59.0"
+                                    style="font-size: 1rem; padding: 0.7rem;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="motywy" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
+                                <input 
+                                    type="number" 
+                                    id="motywy" 
+                                    name="motywy" 
+                                    step="1" 
+                                    required
+                                    data-translate-placeholder-key="motifs_placeholder"
+                                    placeholder="2"
+                                    min="1"
+                                    style="font-size: 1rem; padding: 0.7rem;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="rolki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
+                                <input 
+                                    type="number" 
+                                    id="rolki" 
+                                    name="rolki" 
+                                    step="1" 
+                                    min="1"
+                                    value="1"
+                                    data-translate-placeholder-key="rolls_placeholder"
+                                    placeholder="1"
+                                    style="font-size: 1rem; padding: 0.7rem;">
+                            </div>
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="walek" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
-                            <input 
-                                type="number" 
-                                id="walek" 
-                                name="walek" 
-                                step="0.1" 
-                                required
-                                data-translate-placeholder-key="sleeve_placeholder"
-                                placeholder="59.0"
-                                style="font-size: 1rem; padding: 0.7rem;">
-                        </div>
 
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="motywy" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
-                            <input 
-                                type="number" 
-                                id="motywy" 
-                                name="motywy" 
-                                step="1" 
-                                required
-                                data-translate-placeholder-key="motifs_placeholder"
-                                placeholder="2"
-                                min="1"
-                                style="font-size: 1rem; padding: 0.7rem;">
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label for="rolki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
-                            <input 
-                                type="number" 
-                                id="rolki" 
-                                name="rolki" 
-                                step="1" 
-                                min="1"
-                                value="1"
-                                data-translate-placeholder-key="rolls_placeholder"
-                                placeholder="1"
-                                style="font-size: 1rem; padding: 0.7rem;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- DUŻE POLE - METRY (najczęściej używane) -->
-                <div class="form-group">
-                    <label for="metry" data-translate-key="meters_label">📏 Metry (m)</label>
-                    <input 
-                        type="number" 
-                        id="metry" 
-                        name="metry" 
-                        step="0.01" 
-                        required
-                        data-translate-placeholder-key="meters_placeholder"
-                        placeholder="6289"
-                        autofocus
-                        style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
-                </div>
-
-                <div class="form-group" style="margin-top: 1rem;">
-                    <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none;">
+                    <!-- DUŻE POLE - METRY (najczęściej używane) -->
+                    <div class="form-group">
+                        <label for="metry" data-translate-key="meters_label">📏 Metry (m)</label>
                         <input 
-                            type="checkbox" 
-                            id="zaokraglaj" 
-                            name="zaokraglaj"
-                            style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
-                        <span style="font-size: 1rem;" data-translate-key="rounding_label">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
-                    </label>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;" data-translate-key="rounding_desc">
-                        Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
-                    </p>
+                            type="number" 
+                            id="metry" 
+                            name="metry" 
+                            step="0.01" 
+                            required
+                            data-translate-placeholder-key="meters_placeholder"
+                            placeholder="6289"
+                            autofocus
+                            style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none;">
+                            <input 
+                                type="checkbox" 
+                                id="zaokraglaj" 
+                                name="zaokraglaj"
+                                style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
+                            <span style="font-size: 1rem;" data-translate-key="rounding_label">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
+                        </label>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;" data-translate-key="rounding_desc">
+                            Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
+                        </p>
+                    </div>
+
+                    <div id="resultBox" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
+                        <div class="result-label" data-translate-key="result_label_single">Wynik - 1 rolka</div>
+                        <div class="result-value" id="resultValue">0</div>
+                        <div class="result-unit" data-translate-key="result_unit">Obrazków</div>
+                        <div id="resultDetails" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
+                        
+                        <!-- MAŁA INFO O ROLKACH -->
+                        <div id="resultTotal" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; display: none;">
+                            <span id="resultTotalText"></span>
+                        </div>
+                        
+                        <!-- PRZYCISK KOPIUJ -->
+                        <button type="button" class="btn" onclick="copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
+                            <span data-translate-key="copy_button">📋 Skopiuj wynik (format systemu)</span>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn"><span data-translate-key="calculate_button">🔢 Oblicz</span></button>
+                </form>
+            </div>
+
+            <div class="history-section">
+                <!-- STATYSTYKI -->
+                <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_today">📊 Dzisiaj obliczeń</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statToday">0</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_total_images">🎯 Łącznie obrazków</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotal">0</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_avg_roll">📏 Średnia rolka</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvg">0 m</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="resultBox" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
-                    <div class="result-label" data-translate-key="result_label_single">Wynik - 1 rolka</div>
-                    <div class="result-value" id="resultValue">0</div>
-                    <div class="result-unit" data-translate-key="result_unit">Obrazków</div>
-                    <div id="resultDetails" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
-                    
-                    <!-- MAŁA INFO O ROLKACH -->
-                    <div id="resultTotal" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; display: none;">
-                        <span id="resultTotalText"></span>
-                    </div>
-                    
-                    <!-- PRZYCISK KOPIUJ -->
-                    <button type="button" class="btn" onclick="copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
-                        <span data-translate-key="copy_button">📋 Skopiuj wynik (format systemu)</span>
+                <div class="history-header">
+                    <div class="history-title" data-translate-key="history_title">📜 Historia obliczeń</div>
+                    <button class="btn btn-danger" onclick="clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
+                        <span data-translate-key="clear_history_button">🗑️ Wyczyść historię</span>
                     </button>
                 </div>
 
-                <button type="submit" class="btn"><span data-translate-key="calculate_button">🔢 Oblicz</span></button>
-            </form>
-        </div>
-
-        <div class="history-section">
-            <!-- STATYSTYKI -->
-            <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_today">📊 Dzisiaj obliczeń</div>
-                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statToday">0</div>
+                <div id="historyContainer">
+                    <div class="empty-history" data-translate-key="empty_history">
+                        Brak historii obliczeń. Wykonaj pierwsze obliczenie!
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_total_images">🎯 Łącznie obrazków</div>
-                        <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotal">0</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_avg_roll">📏 Średnia rolka</div>
-                        <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvg">0 m</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="history-header">
-                <div class="history-title" data-translate-key="history_title">📜 Historia obliczeń</div>
-                <button class="btn btn-danger" onclick="clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
-                    <span data-translate-key="clear_history_button">🗑️ Wyczyść historię</span>
-                </button>
-            </div>
-
-            <div id="historyContainer">
-                <div class="empty-history" data-translate-key="empty_history">
-                    Brak historii obliczeń. Wykonaj pierwsze obliczenie!
                 </div>
             </div>
         </div>
     </div>
+    <footer>
+        Made by Kamil Matysek
+    </footer>
 
     <script>
         // =================================================================
@@ -562,7 +565,7 @@
         const translations = {
             pl: {
                 page_title: "Kalkulator Obrazków - SENTREX",
-                app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.1",
+                app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.2",
                 help_button: "❓ Jak to działa?",
                 help_button_title: "Pokaż pomoc",
                 theme_toggle_title: "Zmień motyw",
@@ -609,11 +612,12 @@
                 confirm_clear_history: "Czy na pewno chcesz usunąć całą historię ({count} obliczeń)?",
                 copied_text: "✅ Skopiowano:",
                 detailed_result_text: "📊 Dokładny wynik: {exact} (+{diff} obrazków)",
-                total_result_text: "🔪 Łącznie {rolls} rolek: {total} obrazków ({single} × {rolls})"
+                total_result_text: "🔪 Łącznie {rolls} rolek: {total} obrazków ({single} × {rolls})",
+                error_invalid_sleeve: "Wartość wałka musi być większa od zera!"
             },
-            uk: {
+            ua: {
                 page_title: "Калькулятор Зображень - SENTREX",
-                app_title: "📊 Калькулятор Зображень - SENTREX v1.0.1",
+                app_title: "📊 Калькулятор Зображень - SENTREX v1.0.2",
                 help_button: "❓ Як це працює?",
                 help_button_title: "Показати допомогу",
                 theme_toggle_title: "Змінити тему",
@@ -660,11 +664,12 @@
                 confirm_clear_history: "Ви впевнені, що хочете видалити всю історію ({count} обчислень)?",
                 copied_text: "✅ Скопійовано:",
                 detailed_result_text: "📊 Точний результат: {exact} (+{diff} зображень)",
-                total_result_text: "🔪 Всього {rolls} рулонів: {total} зображень ({single} × {rolls})"
+                total_result_text: "🔪 Всього {rolls} рулонів: {total} зображень ({single} × {rolls})",
+                error_invalid_sleeve: "Значення валу має бути більше нуля!"
             },
             ru: {
                 page_title: "Калькулятор Изображений - SENTREX",
-                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.1",
+                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.2",
                 help_button: "❓ Как это работает?",
                 help_button_title: "Показать помощь",
                 theme_toggle_title: "Сменить тему",
@@ -711,7 +716,8 @@
                 confirm_clear_history: "Вы уверены, что хотите удалить всю историю ({count} расчётов)?",
                 copied_text: "✅ Скопировано:",
                 detailed_result_text: "📊 Точный результат: {exact} (+{diff} изображений)",
-                total_result_text: "🔪 Всего {rolls} рулонов: {total} изображений ({single} × {rolls})"
+                total_result_text: "🔪 Всего {rolls} рулонов: {total} изображений ({single} × {rolls})",
+                error_invalid_sleeve: "Значение вала должно быть больше нуля!"
             }
         };
         
@@ -722,7 +728,6 @@
             currentLang = lang;
             localStorage.setItem('language', lang);
             
-            // Tłumaczenie elementów z atrybutem data-translate-key
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
                 if (translations[lang][key]) {
@@ -730,7 +735,6 @@
                 }
             });
 
-            // Tłumaczenie tytułów (tooltipów)
             document.querySelectorAll('[data-translate-title-key]').forEach(el => {
                 const key = el.dataset.translateTitleKey;
                 if (translations[lang][key]) {
@@ -738,7 +742,6 @@
                 }
             });
             
-            // Tłumaczenie placeholderów
             document.querySelectorAll('[data-translate-placeholder-key]').forEach(el => {
                 const key = el.dataset.translatePlaceholderKey;
                 if (translations[lang][key]) {
@@ -746,12 +749,10 @@
                 }
             });
             
-            // Aktualizacja aktywnej flagi
             document.querySelectorAll('.lang-flag').forEach(flag => {
                 flag.classList.toggle('active', flag.dataset.lang === lang);
             });
             
-            // Przerenderuj historię, aby zastosować tłumaczenia
             renderHistory();
         }
 
@@ -760,7 +761,7 @@
             if (savedLang && translations[savedLang]) {
                 setLanguage(savedLang);
             } else {
-                setLanguage('pl'); // Domyślny język
+                setLanguage('pl');
             }
         }
 
@@ -796,14 +797,18 @@
             const zaokraglaj = document.getElementById('zaokraglaj').checked;
             const rolki = parseInt(document.getElementById('rolki').value) || 1;
 
+            if (walek <= 0) {
+                alert(translations[currentLang].error_invalid_sleeve);
+                return;
+            }
+
             const wynikDokładny = Math.floor(((metry / walek) * 100) * motywy);
             let wynikKońcowy = wynikDokładny;
             let zaokraglono = false;
 
             if (zaokraglaj) {
-                const reszta = wynikDokładny % 100;
-                let doNajbliższejSetki = (reszta === 0) ? 200 : (100 - reszta < 100 ? 100 - reszta + 100 : 100 - reszta);
-                wynikKońcowy = wynikDokładny + doNajbliższejSetki;
+                const doDodania = 100 + (100 - (wynikDokładny % 100)) % 100;
+                wynikKońcowy = wynikDokładny + doDodania;
                 zaokraglono = true;
             }
 
@@ -830,7 +835,7 @@
             if (rolki > 1) {
                 resultTotal.style.display = 'block';
                 document.getElementById('resultTotalText').textContent = translations[currentLang].total_result_text
-                    .replace('{rolls}', rolki)
+                    .replace(/{rolls}/g, rolki) // <-- POPRAWKA ZASTOSOWANA TUTAJ
                     .replace('{total}', wynikLacznie.toLocaleString('pl-PL'))
                     .replace('{single}', wynikKońcowy.toLocaleString('pl-PL'));
             } else {
@@ -867,7 +872,6 @@
                 setTimeout(() => {
                     btn.innerHTML = originalText;
                     btn.style.background = 'rgba(255,255,255,0.2)';
-                    setLanguage(currentLang); // Przywróć tłumaczenie
                 }, 2000);
             }).catch(err => console.error('Błąd kopiowania:', err));
         }
@@ -983,10 +987,12 @@
         }
 
         // Inicjalizacja
-        loadTheme();
-        loadHistory();
-        loadLanguage(); // Wczytaj zapisany język
-        updateStats();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadHistory();
+            loadLanguage();
+            updateStats();
+        });
     </script>
 </body>
 </html>
