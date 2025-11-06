@@ -390,7 +390,7 @@
     <div class="content-wrapper">
         <div class="header">
             <div class="header-content">
-                <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.2</div>
+                <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.4</div>
                 <div class="controls-wrapper">
                      <div class="language-selector">
                         <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
@@ -565,7 +565,7 @@
         const translations = {
             pl: {
                 page_title: "Kalkulator Obrazków - SENTREX",
-                app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.2",
+                app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.4",
                 help_button: "❓ Jak to działa?",
                 help_button_title: "Pokaż pomoc",
                 theme_toggle_title: "Zmień motyw",
@@ -617,7 +617,7 @@
             },
             ua: {
                 page_title: "Калькулятор Зображень - SENTREX",
-                app_title: "📊 Калькулятор Зображень - SENTREX v1.0.2",
+                app_title: "📊 Калькулятор Зображень - SENTREX v1.0.4",
                 help_button: "❓ Як це працює?",
                 help_button_title: "Показати допомогу",
                 theme_toggle_title: "Змінити тему",
@@ -669,7 +669,7 @@
             },
             ru: {
                 page_title: "Калькулятор Изображений - SENTREX",
-                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.2",
+                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.4",
                 help_button: "❓ Как это работает?",
                 help_button_title: "Показать помощь",
                 theme_toggle_title: "Сменить тему",
@@ -835,7 +835,7 @@
             if (rolki > 1) {
                 resultTotal.style.display = 'block';
                 document.getElementById('resultTotalText').textContent = translations[currentLang].total_result_text
-                    .replace(/{rolls}/g, rolki) // <-- POPRAWKA ZASTOSOWANA TUTAJ
+                    .replace(/{rolls}/g, rolki)
                     .replace('{total}', wynikLacznie.toLocaleString('pl-PL'))
                     .replace('{single}', wynikKońcowy.toLocaleString('pl-PL'));
             } else {
@@ -987,12 +987,10 @@
         }
 
         // Inicjalizacja
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTheme();
-            loadHistory();
-            loadLanguage();
-            updateStats();
-        });
+        loadTheme();
+        loadHistory();
+        loadLanguage();
+        updateStats();
     </script>
 </body>
 </html>
