@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Obrazków - SENTREX v1.0.0 </title>
+    <title data-translate-key="page_title">Kalkulator Obrazków - SENTREX</title>
     <style>
         * {
             margin: 0;
@@ -65,6 +65,40 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--accent);
+        }
+        
+        .controls-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            border: 2px solid var(--border);
+        }
+
+        .lang-flag {
+            cursor: pointer;
+            font-size: 1.2rem;
+            filter: grayscale(1);
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .lang-flag:hover {
+            filter: grayscale(0);
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .lang-flag.active {
+            filter: grayscale(0);
+            opacity: 1;
         }
 
         .theme-toggle {
@@ -341,12 +375,17 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <div class="title">📊 Kalkulator Obrazków - SENTREX</div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <button class="theme-toggle" onclick="toggleHelp()" title="Pokaż pomoc" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                    ❓ Jak to działa?
+            <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.0</div>
+            <div class="controls-wrapper">
+                 <div class="language-selector">
+                    <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
+                    <span onclick="setLanguage('uk')" class="lang-flag" data-lang="uk" title="Українська">🇺🇦</span>
+                    <span onclick="setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
+                </div>
+                <button class="theme-toggle" onclick="toggleHelp()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    <span data-translate-key="help_button">❓ Jak to działa?</span>
                 </button>
-                <button class="theme-toggle" onclick="toggleTheme()" title="Zmień motyw">🌓</button>
+                <button class="theme-toggle" onclick="toggleTheme()" data-translate-title-key="theme_toggle_title" title="Zmień motyw">🌓</button>
             </div>
         </div>
     </div>
@@ -354,52 +393,54 @@
     <!-- ROZSUWANE INFO -->
     <div id="helpBox" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
         <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
-            <h3 style="color: var(--accent); margin-bottom: 0.8rem;">ℹ️ Jak to działa?</h3>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
-            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+            <h3 style="color: var(--accent); margin-bottom: 0.8rem;" data-translate-key="help_box_title">ℹ️ Jak to działa?</h3>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_meters"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_sleeve"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_motifs"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_formula"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
         </div>
     </div>
 
     <div class="container">
         <div class="calculator-card">
-            <div class="calculator-header">Oblicz liczbę obrazków</div>
+            <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
             
             <form id="calculatorForm" onsubmit="calculate(event)">
                 <!-- KONFIGURACJA W JEDNEJ LINII - ustawia się raz na zmianę -->
                 <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
-                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
                         ⚙️ KONFIGURACJA (ustaw raz na zmianę)
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="walek" style="font-size: 0.9rem;">🔧 Wałek (cm)</label>
+                            <label for="walek" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
                             <input 
                                 type="number" 
                                 id="walek" 
                                 name="walek" 
                                 step="0.1" 
-                                required 
+                                required
+                                data-translate-placeholder-key="sleeve_placeholder"
                                 placeholder="59.0"
                                 style="font-size: 1rem; padding: 0.7rem;">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="motywy" style="font-size: 0.9rem;">🎨 Motywy</label>
+                            <label for="motywy" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
                             <input 
                                 type="number" 
                                 id="motywy" 
                                 name="motywy" 
                                 step="1" 
-                                required 
+                                required
+                                data-translate-placeholder-key="motifs_placeholder"
                                 placeholder="2"
                                 min="1"
                                 style="font-size: 1rem; padding: 0.7rem;">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label for="rolki" style="font-size: 0.9rem;">🔪 Rolek</label>
+                            <label for="rolki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
                             <input 
                                 type="number" 
                                 id="rolki" 
@@ -407,6 +448,7 @@
                                 step="1" 
                                 min="1"
                                 value="1"
+                                data-translate-placeholder-key="rolls_placeholder"
                                 placeholder="1"
                                 style="font-size: 1rem; padding: 0.7rem;">
                         </div>
@@ -415,13 +457,14 @@
 
                 <!-- DUŻE POLE - METRY (najczęściej używane) -->
                 <div class="form-group">
-                    <label for="metry">📏 Metry (m)</label>
+                    <label for="metry" data-translate-key="meters_label">📏 Metry (m)</label>
                     <input 
                         type="number" 
                         id="metry" 
                         name="metry" 
                         step="0.01" 
-                        required 
+                        required
+                        data-translate-placeholder-key="meters_placeholder"
                         placeholder="6289"
                         autofocus
                         style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
@@ -434,17 +477,17 @@
                             id="zaokraglaj" 
                             name="zaokraglaj"
                             style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
-                        <span style="font-size: 1rem;">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
+                        <span style="font-size: 1rem;" data-translate-key="rounding_label">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
                     </label>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;" data-translate-key="rounding_desc">
                         Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
                     </p>
                 </div>
 
                 <div id="resultBox" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
-                    <div class="result-label">Wynik - 1 rolka</div>
+                    <div class="result-label" data-translate-key="result_label_single">Wynik - 1 rolka</div>
                     <div class="result-value" id="resultValue">0</div>
-                    <div class="result-unit">Obrazków</div>
+                    <div class="result-unit" data-translate-key="result_unit">Obrazków</div>
                     <div id="resultDetails" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
                     
                     <!-- MAŁA INFO O ROLKACH -->
@@ -454,11 +497,11 @@
                     
                     <!-- PRZYCISK KOPIUJ -->
                     <button type="button" class="btn" onclick="copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
-                        📋 Skopiuj wynik (format systemu)
+                        <span data-translate-key="copy_button">📋 Skopiuj wynik (format systemu)</span>
                     </button>
                 </div>
 
-                <button type="submit" class="btn">🔢 Oblicz</button>
+                <button type="submit" class="btn"><span data-translate-key="calculate_button">🔢 Oblicz</span></button>
             </form>
         </div>
 
@@ -467,29 +510,29 @@
             <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
                     <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📊 Dzisiaj obliczeń</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_today">📊 Dzisiaj obliczeń</div>
                         <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statToday">0</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">🎯 Łącznie obrazków</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_total_images">🎯 Łącznie obrazków</div>
                         <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotal">0</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📏 Średnia rolka</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_avg_roll">📏 Średnia rolka</div>
                         <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvg">0 m</div>
                     </div>
                 </div>
             </div>
 
             <div class="history-header">
-                <div class="history-title">📜 Historia obliczeń</div>
+                <div class="history-title" data-translate-key="history_title">📜 Historia obliczeń</div>
                 <button class="btn btn-danger" onclick="clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
-                    🗑️ Wyczyść historię
+                    <span data-translate-key="clear_history_button">🗑️ Wyczyść historię</span>
                 </button>
             </div>
 
             <div id="historyContainer">
-                <div class="empty-history">
+                <div class="empty-history" data-translate-key="empty_history">
                     Brak historii obliczeń. Wykonaj pierwsze obliczenie!
                 </div>
             </div>
@@ -497,9 +540,220 @@
     </div>
 
     <script>
-        let history = [];
+        // =================================================================
+        // TŁUMACZENIA
+        // =================================================================
+        const translations = {
+            pl: {
+                page_title: "Kalkulator Obrazków - SENTREX",
+                app_title: "📊 Kalkulator Obrazków - SENTREX v 1.0.1",
+                help_button: "❓ Jak to działa?",
+                help_button_title: "Pokaż pomoc",
+                theme_toggle_title: "Zmień motyw",
+                help_box_title: "ℹ️ Jak to działa?",
+                help_meters: "<strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)",
+                help_sleeve: "<strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)",
+                help_motifs: "<strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)",
+                help_formula: "<strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków",
+                card_header: "Oblicz liczbę obrazków",
+                config_header: "⚙️ KONFIGURACJA (ustaw raz na zmianę)",
+                sleeve_label: "🔧 Wałek (cm)",
+                sleeve_placeholder: "59.0",
+                motifs_label: "🎨 Motywy",
+                motifs_placeholder: "2",
+                rolls_label: "🔪 Rolek",
+                rolls_placeholder: "1",
+                meters_label: "📏 Metry (m)",
+                meters_placeholder: "6289",
+                rounding_label: "📈 Zaokrąglaj w górę (min. +100, max. +200)",
+                rounding_desc: "Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków",
+                result_label_single: "Wynik - 1 rolka",
+                result_unit: "Obrazków",
+                copy_button: "📋 Skopiuj wynik (format systemu)",
+                calculate_button: "🔢 Oblicz",
+                stats_today: "📊 Dzisiaj obliczeń",
+                stats_total_images: "🎯 Łącznie obrazków",
+                stats_avg_roll: "📏 Średnia rolka",
+                history_title: "📜 Historia obliczeń",
+                clear_history_button: "🗑️ Wyczyść historię",
+                empty_history: "Brak historii obliczeń. Wykonaj pierwsze obliczenie!",
+                history_delete_button: "🗑️ Usuń",
+                history_meters: "<strong>Metry:</strong>",
+                history_sleeve: "<strong>Wałek:</strong>",
+                history_motifs: "<strong>Motywy:</strong>",
+                history_rolls: "<strong>Rolek:</strong>",
+                history_result_label: "➡️ Wynik:",
+                history_images_unit_single: "obrazków (1 rolka)",
+                history_rounded_from: "📈 Zaokrąglono z",
+                history_total_label: "🔪 Łącznie:",
+                history_total_images_unit: "obrazków",
+                history_total_from_rolls: "rolek",
+                confirm_delete_item: "Czy na pewno chcesz usunąć to obliczenie z historii?",
+                alert_history_empty: "Historia jest już pusta!",
+                confirm_clear_history: "Czy na pewno chcesz usunąć całą historię ({count} obliczeń)?",
+                copied_text: "✅ Skopiowano:",
+                detailed_result_text: "📊 Dokładny wynik: {exact} (+{diff} obrazków)",
+                total_result_text: "🔪 Łącznie {rolls} rolek: {total} obrazków ({single} × {rolls})"
+            },
+            uk: {
+                page_title: "Калькулятор Зображень - SENTREX",
+                app_title: "📊 Калькулятор Зображень - SENTREX v 1.0.1",
+                help_button: "❓ Як це працює?",
+                help_button_title: "Показати допомогу",
+                theme_toggle_title: "Змінити тему",
+                help_box_title: "ℹ️ Як це працює?",
+                help_meters: "<strong>Метри:</strong> Довжина друкованого рулону паперу (напр. 6289м)",
+                help_sleeve: "<strong>Валок (Sleeve):</strong> діаметр гільзи в сантиметрах (напр. 59см)",
+                help_motifs: "<strong>Кількість мотивів:</strong> Скільки зображень вміщується на одній гільзі (напр. 2)",
+                help_formula: "<strong>Формула:</strong> ((Метри / Валок) × 100) × Кількість мотивів = Кількість зображень",
+                card_header: "Обчислити кількість зображень",
+                config_header: "⚙️ КОНФІГУРАЦІЯ (встановити раз на зміну)",
+                sleeve_label: "🔧 Валок (см)",
+                sleeve_placeholder: "59.0",
+                motifs_label: "🎨 Мотиви",
+                motifs_placeholder: "2",
+                rolls_label: "🔪 Рулонів",
+                rolls_placeholder: "1",
+                meters_label: "📏 Метри (м)",
+                meters_placeholder: "6289",
+                rounding_label: "📈 Округлювати вгору (мін. +100, макс. +200)",
+                rounding_desc: "Округлює до повної сотні, додаючи мінімум 100, максимум 200 зображень",
+                result_label_single: "Результат - 1 рулон",
+                result_unit: "Зображень",
+                copy_button: "📋 Скопіювати результат (формат системи)",
+                calculate_button: "🔢 Обчислити",
+                stats_today: "📊 Сьогодні обчислень",
+                stats_total_images: "🎯 Всього зображень",
+                stats_avg_roll: "📏 Середній рулон",
+                history_title: "📜 Історія обчислень",
+                clear_history_button: "🗑️ Очистити історію",
+                empty_history: "Історія обчислень порожня. Зробіть перше обчислення!",
+                history_delete_button: "🗑️ Видалити",
+                history_meters: "<strong>Метри:</strong>",
+                history_sleeve: "<strong>Валок:</strong>",
+                history_motifs: "<strong>Мотиви:</strong>",
+                history_rolls: "<strong>Рулонів:</strong>",
+                history_result_label: "➡️ Результат:",
+                history_images_unit_single: "зображень (1 рулон)",
+                history_rounded_from: "📈 Округлено з",
+                history_total_label: "🔪 Всього:",
+                history_total_images_unit: "зображень",
+                history_total_from_rolls: "рулонів",
+                confirm_delete_item: "Ви впевнені, що хочете видалити це обчислення з історії?",
+                alert_history_empty: "Історія вже порожня!",
+                confirm_clear_history: "Ви впевнені, що хочете видалити всю історію ({count} обчислень)?",
+                copied_text: "✅ Скопійовано:",
+                detailed_result_text: "📊 Точний результат: {exact} (+{diff} зображень)",
+                total_result_text: "🔪 Всього {rolls} рулонів: {total} зображень ({single} × {rolls})"
+            },
+            ru: {
+                page_title: "Калькулятор Изображений - SENTREX",
+                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.1",
+                help_button: "❓ Как это работает?",
+                help_button_title: "Показать помощь",
+                theme_toggle_title: "Сменить тему",
+                help_box_title: "ℹ️ Как это работает?",
+                help_meters: "<strong>Метры:</strong> Длина печатного рулона бумаги (напр. 6289м)",
+                help_sleeve: "<strong>Вал (Sleeve):</strong> диаметр гильзы в сантиметрах (напр. 59см)",
+                help_motifs: "<strong>Количество мотивов:</strong> Сколько изображений помещается на одной гильзе (напр. 2)",
+                help_formula: "<strong>Формула:</strong> ((Метры / Вал) × 100) × Количество мотивов = Количество изображений",
+                card_header: "Рассчитать количество изображений",
+                config_header: "⚙️ КОНФИГУРАЦИЯ (установить раз на смену)",
+                sleeve_label: "🔧 Вал (см)",
+                sleeve_placeholder: "59.0",
+                motifs_label: "🎨 Мотивы",
+                motifs_placeholder: "2",
+                rolls_label: "🔪 Рулонов",
+                rolls_placeholder: "1",
+                meters_label: "📏 Метры (м)",
+                meters_placeholder: "6289",
+                rounding_label: "📈 Округлять вверх (мин. +100, макс. +200)",
+                rounding_desc: "Округляет до полной сотни, добавляя минимум 100, максимум 200 изображений",
+                result_label_single: "Результат - 1 рулон",
+                result_unit: "Изображений",
+                copy_button: "📋 Скопировать результат (формат системы)",
+                calculate_button: "🔢 Рассчитать",
+                stats_today: "📊 Сегодня расчётов",
+                stats_total_images: "🎯 Всего изображений",
+                stats_avg_roll: "📏 Средний рулон",
+                history_title: "📜 История расчётов",
+                clear_history_button: "🗑️ Очистить историю",
+                empty_history: "История расчётов пуста. Сделайте первый расчёт!",
+                history_delete_button: "🗑️ Удалить",
+                history_meters: "<strong>Метры:</strong>",
+                history_sleeve: "<strong>Вал:</strong>",
+                history_motifs: "<strong>Мотивы:</strong>",
+                history_rolls: "<strong>Рулонов:</strong>",
+                history_result_label: "➡️ Результат:",
+                history_images_unit_single: "изображений (1 рулон)",
+                history_rounded_from: "📈 Округлено с",
+                history_total_label: "🔪 Всего:",
+                history_total_images_unit: "изображений",
+                history_total_from_rolls: "рулонов",
+                confirm_delete_item: "Вы уверены, что хотите удалить этот расчёт из истории?",
+                alert_history_empty: "История уже пуста!",
+                confirm_clear_history: "Вы уверены, что хотите удалить всю историю ({count} расчётов)?",
+                copied_text: "✅ Скопировано:",
+                detailed_result_text: "📊 Точный результат: {exact} (+{diff} изображений)",
+                total_result_text: "🔪 Всего {rolls} рулонов: {total} изображений ({single} × {rolls})"
+            }
+        };
+        
+        let currentLang = 'pl';
+        
+        function setLanguage(lang) {
+            if (!translations[lang]) return;
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+            
+            // Tłumaczenie elementów z atrybutem data-translate-key
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.dataset.translateKey;
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
 
-        // Wczytaj historię z localStorage przy starcie
+            // Tłumaczenie tytułów (tooltipów)
+            document.querySelectorAll('[data-translate-title-key]').forEach(el => {
+                const key = el.dataset.translateTitleKey;
+                if (translations[lang][key]) {
+                    el.title = translations[lang][key];
+                }
+            });
+            
+            // Tłumaczenie placeholderów
+            document.querySelectorAll('[data-translate-placeholder-key]').forEach(el => {
+                const key = el.dataset.translatePlaceholderKey;
+                if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+            
+            // Aktualizacja aktywnej flagi
+            document.querySelectorAll('.lang-flag').forEach(flag => {
+                flag.classList.toggle('active', flag.dataset.lang === lang);
+            });
+            
+            // Przerenderuj historię, aby zastosować tłumaczenia
+            renderHistory();
+        }
+
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && translations[savedLang]) {
+                setLanguage(savedLang);
+            } else {
+                setLanguage('pl'); // Domyślny język
+            }
+        }
+
+        // =================================================================
+        // LOGIKA APLIKACJI
+        // =================================================================
+        let history = [];
+        let lastResult = 0;
+
         function loadHistory() {
             const saved = localStorage.getItem('obrazki_history');
             if (saved) {
@@ -513,15 +767,10 @@
             }
         }
 
-        // Zapisz historię do localStorage
         function saveHistory() {
             localStorage.setItem('obrazki_history', JSON.stringify(history));
         }
 
-        // Zmienna globalna dla ostatniego wyniku (do kopiowania)
-        let lastResult = 0;
-
-        // Oblicz liczbę obrazków
         function calculate(event) {
             event.preventDefault();
 
@@ -531,229 +780,150 @@
             const zaokraglaj = document.getElementById('zaokraglaj').checked;
             const rolki = parseInt(document.getElementById('rolki').value) || 1;
 
-            // Formuła: ((metry / wałek) * 100) * motywy
             const wynikDokładny = Math.floor(((metry / walek) * 100) * motywy);
             let wynikKońcowy = wynikDokładny;
             let zaokraglono = false;
 
-            // Jeśli zaokrąglanie włączone
             if (zaokraglaj) {
-                // Zaokrąglij do pełnej setki, ale dodaj minimum 100, maksimum 200
                 const reszta = wynikDokładny % 100;
-                let doNajbliższejSetki = 0;
-                
-                if (reszta === 0) {
-                    // Już jest pełną setką - dodaj 200
-                    doNajbliższejSetki = 200;
-                } else {
-                    // Oblicz ile do najbliższej setki
-                    doNajbliższejSetki = 100 - reszta;
-                    
-                    // Jeśli dodanie do najbliższej setki to mniej niż 100, dodaj jeszcze jedną setkę
-                    if (doNajbliższejSetki < 100) {
-                        doNajbliższejSetki += 100;
-                    }
-                }
-                
+                let doNajbliższejSetki = (reszta === 0) ? 200 : (100 - reszta < 100 ? 100 - reszta + 100 : 100 - reszta);
                 wynikKońcowy = wynikDokładny + doNajbliższejSetki;
                 zaokraglono = true;
             }
 
-            // Zapisz dla funkcji kopiowania
             lastResult = wynikKońcowy;
-
-            // Oblicz łączną ilość z wszystkich rolek
             const wynikLacznie = wynikKońcowy * rolki;
 
-            // Pokaż wynik z animacją
             const resultBox = document.getElementById('resultBox');
             const resultValue = document.getElementById('resultValue');
             const resultDetails = document.getElementById('resultDetails');
             const resultTotal = document.getElementById('resultTotal');
-            const resultTotalValue = document.getElementById('resultTotalValue');
-            const resultTotalInfo = document.getElementById('resultTotalInfo');
             
             resultBox.style.display = 'block';
-            resultValue.style.transform = 'scale(0)';
             resultValue.textContent = wynikKońcowy.toLocaleString('pl-PL');
             
-            // Pokaż szczegóły zaokrąglenia
             if (zaokraglono) {
                 const roznica = wynikKońcowy - wynikDokładny;
-                resultDetails.innerHTML = `📊 Dokładny wynik: ${wynikDokładny.toLocaleString('pl-PL')} (+${roznica} obrazków)`;
+                resultDetails.innerHTML = translations[currentLang].detailed_result_text
+                    .replace('{exact}', wynikDokładny.toLocaleString('pl-PL'))
+                    .replace('{diff}', roznica);
             } else {
                 resultDetails.innerHTML = '';
             }
 
-            // Pokaż sumę z rolek (jeśli więcej niż 1 rolka)
             if (rolki > 1) {
                 resultTotal.style.display = 'block';
-                document.getElementById('resultTotalText').textContent = 
-                    `🔪 Łącznie ${rolki} rolek: ${wynikLacznie.toLocaleString('pl-PL')} obrazków (${wynikKońcowy.toLocaleString('pl-PL')} × ${rolki})`;
+                document.getElementById('resultTotalText').textContent = translations[currentLang].total_result_text
+                    .replace('{rolls}', rolki)
+                    .replace('{total}', wynikLacznie.toLocaleString('pl-PL'))
+                    .replace('{single}', wynikKońcowy.toLocaleString('pl-PL'));
             } else {
                 resultTotal.style.display = 'none';
             }
             
+            resultValue.style.transform = 'scale(0)';
             setTimeout(() => {
                 resultValue.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
                 resultValue.style.transform = 'scale(1)';
             }, 10);
 
-            // Dodaj do historii
             const historyItem = {
                 id: Date.now(),
-                metry: metry,
-                walek: walek,
-                motywy: motywy,
-                rolki: rolki,
-                wynikDokładny: wynikDokładny,
-                wynikKońcowy: wynikKońcowy,
-                wynikLacznie: wynikLacznie,
-                zaokraglono: zaokraglono,
-                timestamp: new Date().toLocaleString('pl-PL', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                })
+                metry, walek, motywy, rolki, wynikDokładny, wynikKońcowy, wynikLacznie, zaokraglono,
+                timestamp: new Date().toLocaleString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
             };
 
-            history.unshift(historyItem); // Dodaj na początek
-            
-            // Ogranicz historię do 50 elementów
-            if (history.length > 50) {
-                history = history.slice(0, 50);
-            }
+            history.unshift(historyItem);
+            if (history.length > 50) history = history.slice(0, 50);
 
             saveHistory();
             renderHistory();
             updateStats();
         }
 
-        // Kopiuj wynik do schowka (format systemu: 21.5 zamiast 21500)
         function copyResult(event) {
             const formatted = (lastResult / 1000).toFixed(1);
             navigator.clipboard.writeText(formatted).then(() => {
-                // Zmień tekst przycisku tymczasowo
-                const btn = event ? event.target : document.querySelector('button[onclick="copyResult()"]');
+                const btn = event.target.closest('.btn');
                 const originalText = btn.innerHTML;
-                btn.innerHTML = '✅ Skopiowano: ' + formatted;
+                btn.innerHTML = `${translations[currentLang].copied_text} ${formatted}`;
                 btn.style.background = 'rgba(76, 175, 80, 0.3)';
-                
                 setTimeout(() => {
                     btn.innerHTML = originalText;
                     btn.style.background = 'rgba(255,255,255,0.2)';
+                    setLanguage(currentLang); // Przywróć tłumaczenie
                 }, 2000);
-            }).catch(err => {
-                console.error('Błąd kopiowania:', err);
-            });
+            }).catch(err => console.error('Błąd kopiowania:', err));
         }
 
-        // Renderuj historię
         function renderHistory() {
             const container = document.getElementById('historyContainer');
+            const langDict = translations[currentLang];
 
             if (history.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-history">
-                        Brak historii obliczeń. Wykonaj pierwsze obliczenie!
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-history">${langDict.empty_history}</div>`;
                 return;
             }
 
             container.innerHTML = history.map(item => {
-                // Obsługa starych zapisów (przed dodaniem zaokrąglania/rolek)
                 const wynikDoWyswietlenia = item.wynikKońcowy || item.wynik;
-                const czyZaokraglono = item.zaokraglono || false;
-                const wynikDokładny = item.wynikDokładny || item.wynik;
-                const rolki = item.rolki || 1;
-                const wynikLacznie = item.wynikLacznie || wynikDoWyswietlenia;
-                
                 let wynikHTML = '';
-                if (czyZaokraglono) {
-                    const roznica = wynikDoWyswietlenia - wynikDokładny;
+
+                if (item.zaokraglono) {
+                    const roznica = item.wynikKońcowy - item.wynikDokładny;
                     wynikHTML = `
                         <div class="history-result">
-                            ➡️ Wynik: ${wynikDoWyswietlenia.toLocaleString('pl-PL')} obrazków (1 rolka)
+                            ${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}
                             <span style="font-size: 0.9rem; opacity: 0.7; display: block; margin-top: 0.3rem;">
-                                📈 Zaokrąglono z ${wynikDokładny.toLocaleString('pl-PL')} (+${roznica})
+                               ${langDict.history_rounded_from} ${item.wynikDokładny.toLocaleString('pl-PL')} (+${roznica})
                             </span>
-                        </div>
-                    `;
+                        </div>`;
                 } else {
-                    wynikHTML = `
-                        <div class="history-result">
-                            ➡️ Wynik: ${wynikDoWyswietlenia.toLocaleString('pl-PL')} obrazków (1 rolka)
-                        </div>
-                    `;
+                    wynikHTML = `<div class="history-result">${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}</div>`;
                 }
 
-                // Dodaj informację o rolkach jeśli więcej niż 1
-                if (rolki > 1) {
+                if (item.rolki > 1) {
                     wynikHTML += `
                         <div style="margin-top: 0.8rem; padding: 0.8rem; background: rgba(76, 175, 80, 0.1); border-radius: 5px; border-left: 3px solid #4caf50;">
-                            <strong style="color: #4caf50;">🔪 Łącznie: ${wynikLacznie.toLocaleString('pl-PL')} obrazków</strong>
+                            <strong style="color: #4caf50;">${langDict.history_total_label} ${item.wynikLacznie.toLocaleString('pl-PL')} ${langDict.history_total_images_unit}</strong>
                             <span style="font-size: 0.9rem; color: var(--text-secondary); display: block; margin-top: 0.2rem;">
-                                (${wynikDoWyswietlenia.toLocaleString('pl-PL')} × ${rolki} rolek)
+                                (${wynikDoWyswietlenia.toLocaleString('pl-PL')} × ${item.rolki} ${langDict.history_total_from_rolls})
                             </span>
-                        </div>
-                    `;
+                        </div>`;
                 }
                 
                 return `
                     <div class="history-item">
                         <div class="history-item-header">
                             <div class="history-item-time">📅 ${item.timestamp}</div>
-                            <button class="history-item-delete" onclick="deleteHistoryItem(${item.id})">
-                                🗑️ Usuń
-                            </button>
+                            <button class="history-item-delete" onclick="deleteHistoryItem(${item.id})">${langDict.history_delete_button}</button>
                         </div>
                         <div class="history-item-data">
-                            <div class="history-data-item">
-                                <strong>Metry:</strong> ${item.metry.toLocaleString('pl-PL')} m
-                            </div>
-                            <div class="history-data-item">
-                                <strong>Wałek:</strong> ${item.walek} cm
-                            </div>
-                            <div class="history-data-item">
-                                <strong>Motywy:</strong> ${item.motywy}
-                            </div>
-                            ${rolki > 1 ? `<div class="history-data-item"><strong>Rolek:</strong> ${rolki}</div>` : ''}
+                            <div class="history-data-item">${langDict.history_meters} ${item.metry.toLocaleString('pl-PL')} m</div>
+                            <div class="history-data-item">${langDict.history_sleeve} ${item.walek} cm</div>
+                            <div class="history-data-item">${langDict.history_motifs} ${item.motywy}</div>
+                            ${item.rolki > 1 ? `<div class="history-data-item">${langDict.history_rolls} ${item.rolki}</div>` : ''}
                         </div>
                         ${wynikHTML}
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
-        // Aktualizuj statystyki
         function updateStats() {
-            // Dzisiejsza data (tylko dzień, miesiąc, rok)
             const today = new Date().toLocaleDateString('pl-PL');
+            const todayCalculations = history.filter(item => new Date(item.timestamp.split(',')[0].split('.').reverse().join('-')).toLocaleDateString('pl-PL') === today);
             
-            // Filtruj obliczenia z dzisiaj
-            const todayCalculations = history.filter(item => {
-                const itemDate = new Date(item.timestamp.split(',')[0].split('.').reverse().join('-')).toLocaleDateString('pl-PL');
-                return itemDate === today;
-            });
-
-            // Oblicz statystyki
             const statToday = todayCalculations.length;
             const statTotal = history.reduce((sum, item) => sum + (item.wynikLacznie || item.wynikKońcowy || item.wynik || 0), 0);
             const statAvg = history.length > 0 ? Math.round(history.reduce((sum, item) => sum + item.metry, 0) / history.length) : 0;
 
-            // Wyświetl statystyki
             document.getElementById('statToday').textContent = statToday;
             document.getElementById('statTotal').textContent = statTotal.toLocaleString('pl-PL');
             document.getElementById('statAvg').textContent = statAvg.toLocaleString('pl-PL') + ' m';
         }
 
-        // Usuń pojedynczy element z historii
         function deleteHistoryItem(id) {
-            if (confirm('Czy na pewno chcesz usunąć to obliczenie z historii?')) {
+            if (confirm(translations[currentLang].confirm_delete_item)) {
                 history = history.filter(item => item.id !== id);
                 saveHistory();
                 renderHistory();
@@ -761,50 +931,37 @@
             }
         }
 
-        // Wyczyść całą historię
         function clearHistory() {
             if (history.length === 0) {
-                alert('Historia jest już pusta!');
+                alert(translations[currentLang].alert_history_empty);
                 return;
             }
 
-            if (confirm(`Czy na pewno chcesz usunąć całą historię (${history.length} obliczeń)?`)) {
+            const confirmMsg = translations[currentLang].confirm_clear_history.replace('{count}', history.length);
+            if (confirm(confirmMsg)) {
                 history = [];
                 saveHistory();
                 renderHistory();
                 updateStats();
-                
-                // Ukryj wynik
                 document.getElementById('resultBox').style.display = 'none';
-                
-                // Wyczyść formularz
                 document.getElementById('calculatorForm').reset();
-                document.getElementById('rolki').value = 1; // Przywróć domyślną wartość rolek
+                document.getElementById('rolki').value = 1;
             }
         }
 
-        // Pokaż/ukryj pomoc
         function toggleHelp() {
             const helpBox = document.getElementById('helpBox');
-            if (helpBox.style.display === 'none' || helpBox.style.display === '') {
-                helpBox.style.display = 'block';
-                helpBox.style.animation = 'slideIn 0.3s';
-            } else {
-                helpBox.style.display = 'none';
-            }
+            helpBox.style.display = (helpBox.style.display === 'none' || helpBox.style.display === '') ? 'block' : 'none';
         }
 
-        // Zmiana motywu
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Wczytaj zapisany motyw
         function loadTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
+            if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
             }
         }
@@ -812,6 +969,7 @@
         // Inicjalizacja
         loadTheme();
         loadHistory();
+        loadLanguage(); // Wczytaj zapisany język
         updateStats();
     </script>
 </body>
