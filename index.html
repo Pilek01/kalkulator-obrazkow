@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Kalkulator Obrazków - SENTREX</title>
+    <title>SENTREX - Kalkulatory Produkcji</title>
     <style>
         * {
             margin: 0;
@@ -42,11 +42,12 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .content-wrapper {
             flex: 1;
         }
 
+        /* Header with Tab Switcher */
         .header {
             background: var(--bg-secondary);
             border-bottom: 3px solid var(--accent);
@@ -72,7 +73,41 @@
             font-weight: 700;
             color: var(--accent);
         }
-        
+
+        /* Tab Switcher */
+        .tab-switcher {
+            display: flex;
+            gap: 1rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .tab-button {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .tab-button.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
         .controls-wrapper {
             display: flex;
             gap: 1rem;
@@ -101,7 +136,7 @@
             opacity: 1;
             transform: scale(1.1);
         }
-        
+
         .lang-flag.active {
             filter: grayscale(0);
             opacity: 1;
@@ -122,6 +157,27 @@
             background: var(--accent);
             border-color: var(--accent);
             transform: scale(1.05);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .container {
@@ -159,7 +215,8 @@
             font-size: 1.1rem;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 1rem;
             background: var(--bg-tertiary);
@@ -172,7 +229,8 @@
             font-weight: 600;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--accent);
         }
@@ -250,6 +308,27 @@
         .btn-danger {
             background: var(--danger);
             border-color: var(--danger);
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .history-section {
@@ -358,12 +437,390 @@
             margin: 0.5rem 0;
         }
 
+        /* Rolki App Specific Styles */
+        .rolki-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+        }
+
+        section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .continuation-group {
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-card {
+            background: var(--bg-tertiary);
+            padding: 1.25rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--accent);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .rolls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rolls-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        .roll-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--accent);
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .roll-item:hover {
+            background: #3a3a3a;
+            transform: translateX(4px);
+            box-shadow: 0 2px 4px rgba(255, 107, 53, 0.2);
+        }
+
+        .roll-info {
+            flex: 1;
+        }
+
+        .roll-number {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .roll-number-dual {
+            margin-bottom: 0.5rem;
+        }
+
+        .roll-number-dual .order-number,
+        .roll-number-dual .shift-number {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .roll-number-dual .order-number {
+            color: var(--accent);
+        }
+
+        .roll-number-dual .shift-number {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .roll-details {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.25rem;
+        }
+
+        .roll-detail {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .roll-detail strong {
+            color: var(--accent);
+        }
+
+        .roll-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .roll-actions {
+            margin-left: 1rem;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .pallet-container {
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 3px solid var(--accent);
+            box-shadow: 0 6px 12px rgba(255, 107, 53, 0.3);
+            position: relative;
+        }
+
+        .pallet-container:nth-child(even) {
+            border-color: #4ecdc4;
+            box-shadow: 0 6px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .pallet-container:nth-child(3n) {
+            border-color: #ffe66d;
+            box-shadow: 0 6px 12px rgba(255, 230, 109, 0.3);
+        }
+
+        .pallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .pallet-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pallet-container:nth-child(even) .pallet-title {
+            color: #4ecdc4;
+        }
+
+        .pallet-container:nth-child(3n) .pallet-title {
+            color: #ffe66d;
+        }
+
+        .pallet-icon {
+            font-size: 1.5rem;
+        }
+
+        .pallet-summary {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .pallet-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .pallet-stat strong {
+            color: var(--text-primary);
+        }
+
+        .pallet-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-edit-pallet {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-edit-pallet:hover {
+            background: #45b8b0;
+            transform: scale(1.05);
+        }
+
+        .pallet-rolls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .pallet-container .roll-item {
+            margin-bottom: 0;
+            border-left-width: 3px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
         footer {
             text-align: center;
             padding: 1.5rem;
             font-size: 0.8rem;
             color: var(--text-secondary);
             opacity: 0.6;
+        }
+
+        .rolls-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .rolls-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .rolls-list::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .rolls-list::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
@@ -383,6 +840,50 @@
                 flex-direction: column;
                 text-align: center;
             }
+
+            .tab-switcher {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tab-button {
+                flex: 1;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-value {
+                font-size: 1.75rem;
+            }
+
+            .roll-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .roll-actions {
+                margin-left: 0;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+
+            .btn-delete {
+                width: 100%;
+            }
+
+            /* Rolki form responsive */
+            #rolkiTab .form-group input {
+                font-size: 1.1rem !important;
+                padding: 1rem !important;
+            }
+
+            #rolkiTab section > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
         }
     </style>
 </head>
@@ -390,14 +891,25 @@
     <div class="content-wrapper">
         <div class="header">
             <div class="header-content">
-                <div class="title" data-translate-key="app_title">📊 Kalkulator Obrazków - SENTREX v1.0.5</div>
+                <div class="title">SENTREX - Kalkulatory Produkcji</div>
+
+                <!-- Tab Switcher -->
+                <div class="tab-switcher">
+                    <button class="tab-button active" onclick="switchTab('obrazki')">
+                        📊 Kalkulator Obrazków
+                    </button>
+                    <button class="tab-button" onclick="switchTab('rolki')">
+                        📦 Licznik Rolek
+                    </button>
+                </div>
+
                 <div class="controls-wrapper">
-                     <div class="language-selector">
-                        <span onclick="setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
-                        <span onclick="setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
-                        <span onclick="setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
+                    <div class="language-selector" id="languageSelectorObrazki">
+                        <span onclick="ObrazkiApp.setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
+                        <span onclick="ObrazkiApp.setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
+                        <span onclick="ObrazkiApp.setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
                     </div>
-                    <button class="theme-toggle" onclick="toggleHelp()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    <button class="theme-toggle" onclick="toggleHelpObrazki()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;" id="helpButtonObrazki">
                         <span data-translate-key="help_button">❓ Jak to działa?</span>
                     </button>
                     <button class="theme-toggle" onclick="toggleTheme()" data-translate-title-key="theme_toggle_title" title="Zmień motyw">🌓</button>
@@ -405,606 +917,364 @@
             </div>
         </div>
 
-        <!-- ROZSUWANE INFO -->
-        <div id="helpBox" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
-            <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
-                <h3 style="color: var(--accent); margin-bottom: 0.8rem;" data-translate-key="help_box_title">ℹ️ Jak to działa?</h3>
-                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_meters"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
-                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_sleeve"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
-                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_motifs"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
-                <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_formula"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+        <!-- OBRAZKI TAB CONTENT -->
+        <div id="obrazkiTab" class="tab-content active">
+            <!-- ROZSUWANE INFO -->
+            <div id="helpBoxObrazki" class="info-box" style="max-width: 1200px; margin: 1rem auto; padding: 0 1rem; display: none;">
+                <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
+                    <h3 style="color: var(--accent); margin-bottom: 0.8rem;" data-translate-key="help_box_title">ℹ️ Jak to działa?</h3>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_meters"><strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)</p>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_sleeve"><strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)</p>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_motifs"><strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)</p>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;" data-translate-key="help_formula"><strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków</p>
+                </div>
             </div>
-        </div>
 
-        <div class="container">
-            <div class="calculator-card">
-                <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
-                
-                <form id="calculatorForm" onsubmit="calculate(event)">
-                    <!-- KONFIGURACJA W JEDNEJ LINII - ustawia się raz na zmianę -->
-                    <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
-                            ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+            <div class="container">
+                <div class="calculator-card">
+                    <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
+
+                    <form id="calculatorFormObrazki" onsubmit="ObrazkiApp.calculate(event)">
+                        <!-- KONFIGURACJA W JEDNEJ LINII -->
+                        <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
+                                ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="walekObrazki" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
+                                    <input
+                                        type="number"
+                                        id="walekObrazki"
+                                        name="walek"
+                                        step="0.1"
+                                        required
+                                        data-translate-placeholder-key="sleeve_placeholder"
+                                        placeholder="59.0"
+                                        style="font-size: 1rem; padding: 0.7rem;">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="motywyObrazki" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
+                                    <input
+                                        type="number"
+                                        id="motywyObrazki"
+                                        name="motywy"
+                                        step="1"
+                                        required
+                                        data-translate-placeholder-key="motifs_placeholder"
+                                        placeholder="2"
+                                        min="1"
+                                        style="font-size: 1rem; padding: 0.7rem;">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="rolkiObrazki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
+                                    <input
+                                        type="number"
+                                        id="rolkiObrazki"
+                                        name="rolki"
+                                        step="1"
+                                        min="1"
+                                        value="1"
+                                        data-translate-placeholder-key="rolls_placeholder"
+                                        placeholder="1"
+                                        style="font-size: 1rem; padding: 0.7rem;">
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="walek" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
-                                <input 
-                                    type="number" 
-                                    id="walek" 
-                                    name="walek" 
-                                    step="0.1" 
-                                    required
-                                    data-translate-placeholder-key="sleeve_placeholder"
-                                    placeholder="59.0"
-                                    style="font-size: 1rem; padding: 0.7rem;">
+
+                        <!-- DUŻE POLE - METRY -->
+                        <div class="form-group">
+                            <label for="metryObrazki" data-translate-key="meters_label">📏 Metry (m)</label>
+                            <input
+                                type="number"
+                                id="metryObrazki"
+                                name="metry"
+                                step="0.01"
+                                required
+                                data-translate-placeholder-key="meters_placeholder"
+                                placeholder="6289"
+                                autofocus
+                                style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none;">
+                                <input
+                                    type="checkbox"
+                                    id="zaokraglajObrazki"
+                                    name="zaokraglaj"
+                                    style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
+                                <span style="font-size: 1rem;" data-translate-key="rounding_label">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
+                            </label>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;" data-translate-key="rounding_desc">
+                                Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
+                            </p>
+                        </div>
+
+                        <div id="resultBoxObrazki" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
+                            <div class="result-label" data-translate-key="result_label_single">Wynik - 1 rolka</div>
+                            <div class="result-value" id="resultValueObrazki">0</div>
+                            <div class="result-unit" data-translate-key="result_unit">Obrazków</div>
+                            <div id="resultDetailsObrazki" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
+
+                            <!-- MAŁA INFO O ROLKACH -->
+                            <div id="resultTotalObrazki" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; display: none;">
+                                <span id="resultTotalTextObrazki"></span>
                             </div>
 
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="motywy" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
-                                <input 
-                                    type="number" 
-                                    id="motywy" 
-                                    name="motywy" 
-                                    step="1" 
-                                    required
-                                    data-translate-placeholder-key="motifs_placeholder"
-                                    placeholder="2"
-                                    min="1"
-                                    style="font-size: 1rem; padding: 0.7rem;">
-                            </div>
+                            <!-- PRZYCISK KOPIUJ -->
+                            <button type="button" class="btn" onclick="ObrazkiApp.copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
+                                <span data-translate-key="copy_button">📋 Skopiuj wynik (format systemu)</span>
+                            </button>
+                        </div>
 
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="rolki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
-                                <input 
-                                    type="number" 
-                                    id="rolki" 
-                                    name="rolki" 
-                                    step="1" 
-                                    min="1"
-                                    value="1"
-                                    data-translate-placeholder-key="rolls_placeholder"
-                                    placeholder="1"
-                                    style="font-size: 1rem; padding: 0.7rem;">
+                        <button type="submit" class="btn"><span data-translate-key="calculate_button">🔢 Oblicz</span></button>
+                    </form>
+                </div>
+
+                <div class="history-section">
+                    <!-- STATYSTYKI -->
+                    <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_today">📊 Ilość obliczeń</div>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statTodayObrazki">0</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_total_images">🎯 Łącznie obrazków</div>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotalObrazki">0</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_avg_roll">📏 Średnia rolka</div>
+                                <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvgObrazki">0 m</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- DUŻE POLE - METRY (najczęściej używane) -->
-                    <div class="form-group">
-                        <label for="metry" data-translate-key="meters_label">📏 Metry (m)</label>
-                        <input 
-                            type="number" 
-                            id="metry" 
-                            name="metry" 
-                            step="0.01" 
-                            required
-                            data-translate-placeholder-key="meters_placeholder"
-                            placeholder="6289"
-                            autofocus
-                            style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
-                    </div>
-
-                    <div class="form-group" style="margin-top: 1rem;">
-                        <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none;">
-                            <input 
-                                type="checkbox" 
-                                id="zaokraglaj" 
-                                name="zaokraglaj"
-                                style="width: 24px; height: 24px; cursor: pointer; accent-color: var(--accent);">
-                            <span style="font-size: 1rem;" data-translate-key="rounding_label">📈 Zaokrąglaj w górę (min. +100, max. +200)</span>
-                        </label>
-                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-left: 2rem;" data-translate-key="rounding_desc">
-                            Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków
-                        </p>
-                    </div>
-
-                    <div id="resultBox" class="result-box" style="display: none; background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
-                        <div class="result-label" data-translate-key="result_label_single">Wynik - 1 rolka</div>
-                        <div class="result-value" id="resultValue">0</div>
-                        <div class="result-unit" data-translate-key="result_unit">Obrazków</div>
-                        <div id="resultDetails" style="font-size: 1rem; opacity: 0.9; margin-top: 0.8rem;"></div>
-                        
-                        <!-- MAŁA INFO O ROLKACH -->
-                        <div id="resultTotal" style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.85; display: none;">
-                            <span id="resultTotalText"></span>
-                        </div>
-                        
-                        <!-- PRZYCISK KOPIUJ -->
-                        <button type="button" class="btn" onclick="copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
-                            <span data-translate-key="copy_button">📋 Skopiuj wynik (format systemu)</span>
+                    <div class="history-header">
+                        <div class="history-title" data-translate-key="history_title">📜 Historia obliczeń</div>
+                        <button class="btn btn-danger" onclick="ObrazkiApp.clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
+                            <span data-translate-key="clear_history_button">🗑️ Wyczyść historię</span>
                         </button>
                     </div>
 
-                    <button type="submit" class="btn"><span data-translate-key="calculate_button">🔢 Oblicz</span></button>
-                </form>
-            </div>
-
-            <div class="history-section">
-                <!-- STATYSTYKI -->
-                <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_today">📊 Dzisiaj obliczeń</div>
-                            <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="statToday">0</div>
+                    <div id="historyContainerObrazki">
+                        <div class="empty-history" data-translate-key="empty_history">
+                            Brak historii obliczeń. Wykonaj pierwsze obliczenie!
                         </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_total_images">🎯 Łącznie obrazków</div>
-                            <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="statTotal">0</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;" data-translate-key="stats_avg_roll">📏 Średnia rolka</div>
-                            <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvg">0 m</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="history-header">
-                    <div class="history-title" data-translate-key="history_title">📜 Historia obliczeń</div>
-                    <button class="btn btn-danger" onclick="clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
-                        <span data-translate-key="clear_history_button">🗑️ Wyczyść historię</span>
-                    </button>
-                </div>
-
-                <div id="historyContainer">
-                    <div class="empty-history" data-translate-key="empty_history">
-                        Brak historii obliczeń. Wykonaj pierwsze obliczenie!
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- ROLKI TAB CONTENT -->
+        <div id="rolkiTab" class="tab-content">
+            <div class="container rolki-container">
+                <!-- Formularz dodawania rolek -->
+                <section class="add-section">
+                    <h2>Dodaj rolki</h2>
+                    <form id="addRollFormRolki">
+                        <!-- Główne pola w 2 kolumnach -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="weightRolki" style="font-size: 1.1rem;">📦 Waga rolki (kg) *</label>
+                                <input
+                                    type="number"
+                                    id="weightRolki"
+                                    step="0.01"
+                                    required
+                                    placeholder="np. 125.5"
+                                    autofocus
+                                    style="font-size: 1.3rem; padding: 1.2rem; font-weight: 700;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="imagesRolki" style="font-size: 1.1rem;">🖼️ Liczba obrazków (opcjonalnie)</label>
+                                <input
+                                    type="number"
+                                    id="imagesRolki"
+                                    step="1"
+                                    placeholder="np. 1000"
+                                    style="font-size: 1.3rem; padding: 1.2rem; font-weight: 700;">
+                            </div>
+                        </div>
+
+                        <!-- Konfiguracja w jednej linii -->
+                        <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;">
+                                ⚙️ KONFIGURACJA
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="quantityRolki" style="font-size: 0.95rem;">🔢 Ilość rolek</label>
+                                    <input
+                                        type="number"
+                                        id="quantityRolki"
+                                        value="1"
+                                        min="1"
+                                        required
+                                        style="font-size: 1.1rem; padding: 0.8rem;">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="rollsPerPalletRolki" style="font-size: 0.95rem;">📦 Rolek na paletę</label>
+                                    <input
+                                        type="number"
+                                        id="rollsPerPalletRolki"
+                                        value="3"
+                                        min="1"
+                                        required
+                                        style="font-size: 1.1rem; padding: 0.8rem;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group continuation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="continuationModeRolki">
+                                <span>Kontynuacja zlecenia po poprzedniej zmianie</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group" id="lastRollGroupRolki" style="display: none;">
+                            <label for="lastRollNumberRolki">Ostatnia rolka z poprzedniej zmiany</label>
+                            <input
+                                type="number"
+                                id="lastRollNumberRolki"
+                                min="0"
+                                value="0"
+                                placeholder="np. 20">
+                            <small class="help-text">Twoje rolki zaczną się od tego numeru + 1</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Dodaj</button>
+                    </form>
+                </section>
+
+                <!-- Podsumowanie -->
+                <section class="summary-section">
+                    <h2>📊 Podsumowanie zmiany</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                        <div class="summary-card" style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.05)); border: 3px solid var(--accent);">
+                            <div class="summary-label">📦 Liczba palet</div>
+                            <div class="summary-value" id="totalPalletsRolki" style="font-size: 2.5rem;">0</div>
+                        </div>
+                        <div class="summary-card" style="background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(78, 205, 196, 0.05)); border: 3px solid #4ecdc4;">
+                            <div class="summary-label">🎯 Liczba rolek</div>
+                            <div class="summary-value" id="totalRollsRolki" style="font-size: 2.5rem; color: #4ecdc4;">0</div>
+                        </div>
+                        <div class="summary-card" style="background: linear-gradient(135deg, rgba(255, 230, 109, 0.15), rgba(255, 230, 109, 0.05)); border: 3px solid #ffe66d;">
+                            <div class="summary-label">⚖️ Suma wag (kg)</div>
+                            <div class="summary-value" id="totalWeightRolki" style="font-size: 2.5rem; color: #ffe66d;">0</div>
+                        </div>
+                        <div class="summary-card" style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.05)); border: 3px solid var(--success);">
+                            <div class="summary-label">🖼️ Suma obrazków</div>
+                            <div class="summary-value" id="totalImagesRolki" style="font-size: 2.5rem; color: var(--success);">0</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Lista rolek -->
+                <section class="rolls-section">
+                    <div class="rolls-header">
+                        <h2>📋 Lista rolek na paletach</h2>
+                        <button id="clearAllBtnRolki" class="btn btn-danger btn-small" style="display: none;">
+                            🗑️ Wyczyść wszystko
+                        </button>
+                    </div>
+                    <div id="rollsListRolki" class="rolls-list">
+                        <p class="empty-message">Brak rolek. Dodaj pierwszą rolkę powyżej.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
+
     <footer>
         Made by Kamil Matysek
     </footer>
 
+    <!-- Modal edycji palety -->
+    <div id="editPalletModalRolki" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edytuj paletę</h3>
+                <p class="subtitle" id="modalPalletInfoRolki"></p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editRollsPerPalletRolki">Liczba rolek na tej palecie</label>
+                    <input
+                        type="number"
+                        id="editRollsPerPalletRolki"
+                        min="1"
+                        value="3">
+                    <small class="help-text">Zmień liczbę rolek, a pozostałe zostaną przesunięte do następnej palety</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditBtnRolki">Anuluj</button>
+                <button class="btn btn-primary" id="saveEditBtnRolki">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // =================================================================
-        // TŁUMACZENIA
+        // TAB SWITCHING
         // =================================================================
-        const translations = {
-            pl: {
-                page_title: "Kalkulator Obrazków - SENTREX",
-                app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.5",
-                help_button: "❓ Jak to działa?",
-                help_button_title: "Pokaż pomoc",
-                theme_toggle_title: "Zmień motyw",
-                help_box_title: "ℹ️ Jak to działa?",
-                help_meters: "<strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)",
-                help_sleeve: "<strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)",
-                help_motifs: "<strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)",
-                help_formula: "<strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków",
-                card_header: "Oblicz liczbę obrazków",
-                config_header: "⚙️ KONFIGURACJA (ustaw raz na zmianę)",
-                sleeve_label: "🔧 Wałek (cm)",
-                sleeve_placeholder: "59.0",
-                motifs_label: "🎨 Motywy",
-                motifs_placeholder: "2",
-                rolls_label: "🔪 Rolek",
-                rolls_placeholder: "1",
-                meters_label: "📏 Metry (m)",
-                meters_placeholder: "6289",
-                rounding_label: "📈 Zaokrąglaj w górę (min. +100, max. +200)",
-                rounding_desc: "Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków",
-                result_label_single: "Wynik - 1 rolka",
-                result_unit: "Obrazków",
-                copy_button: "📋 Skopiuj wynik (format systemu)",
-                calculate_button: "🔢 Oblicz",
-                stats_today: "📊 Dzisiaj obliczeń",
-                stats_total_images: "🎯 Łącznie obrazków",
-                stats_avg_roll: "📏 Średnia rolka",
-                history_title: "📜 Historia obliczeń",
-                clear_history_button: "🗑️ Wyczyść historię",
-                empty_history: "Brak historii obliczeń. Wykonaj pierwsze obliczenie!",
-                history_delete_button: "🗑️ Usuń",
-                history_meters: "<strong>Metry:</strong>",
-                history_sleeve: "<strong>Wałek:</strong>",
-                history_motifs: "<strong>Motywy:</strong>",
-                history_rolls: "<strong>Rolek:</strong>",
-                history_result_label: "➡️ Wynik:",
-                history_images_unit_single: "obrazków (1 rolka)",
-                history_rounded_from: "📈 Zaokrąglono z",
-                history_total_label: "🔪 Łącznie:",
-                history_total_images_unit: "obrazków",
-                history_total_from_rolls: "rolek",
-                confirm_delete_item: "Czy na pewno chcesz usunąć to obliczenie z historii?",
-                alert_history_empty: "Historia jest już pusta!",
-                confirm_clear_history: "Czy na pewno chcesz usunąć całą historię ({count} obliczeń)?",
-                copied_text: "✅ Skopiowano:",
-                detailed_result_text: "📊 Dokładny wynik: {exact} (+{diff} obrazków)",
-                total_result_text: "🔪 Łącznie {rolls} rolek: {total} obrazków ({single} × {rolls})",
-                error_invalid_sleeve: "Wartość wałka musi być większa od zera!"
-            },
-            ua: {
-                page_title: "Калькулятор Зображень - SENTREX",
-                app_title: "📊 Калькулятор Зображень - SENTREX v1.0.5",
-                help_button: "❓ Як це працює?",
-                help_button_title: "Показати допомогу",
-                theme_toggle_title: "Змінити тему",
-                help_box_title: "ℹ️ Як це працює?",
-                help_meters: "<strong>Метри:</strong> Довжина друкованого рулону паперу (напр. 6289м)",
-                help_sleeve: "<strong>Валек (Sleeve):</strong> діаметр гільзи в сантиметрах (напр. 59см)",
-                help_motifs: "<strong>Кількість мотивів:</strong> Скільки зображень вміщується на одній гільзі (напр. 2)",
-                help_formula: "<strong>Формула:</strong> ((Метри / Валек) × 100) × Кількість мотивів = Кількість зображень",
-                card_header: "Обчислити кількість зображень",
-                config_header: "⚙️ КОНФІГУРАЦІЯ (встановити раз на зміну)",
-                sleeve_label: "🔧 Валек (см)",
-                sleeve_placeholder: "59.0",
-                motifs_label: "🎨 Мотиви",
-                motifs_placeholder: "2",
-                rolls_label: "🔪 Рулонів",
-                rolls_placeholder: "1",
-                meters_label: "📏 Метри (м)",
-                meters_placeholder: "6289",
-                rounding_label: "📈 Округлювати вгору (мін. +100, макс. +200)",
-                rounding_desc: "Округлює до повної сотні, додаючи мінімум 100, максимум 200 зображень",
-                result_label_single: "Результат - 1 рулон",
-                result_unit: "Зображень",
-                copy_button: "📋 Скопіювати результат (формат системи)",
-                calculate_button: "🔢 Обчислити",
-                stats_today: "📊 Сьогодні обчислень",
-                stats_total_images: "🎯 Всього зображень",
-                stats_avg_roll: "📏 Середній рулон",
-                history_title: "📜 Історія обчислень",
-                clear_history_button: "🗑️ Очистити історію",
-                empty_history: "Історія обчислень порожня. Зробіть перше обчислення!",
-                history_delete_button: "🗑️ Видалити",
-                history_meters: "<strong>Метри:</strong>",
-                history_sleeve: "<strong>Валек:</strong>",
-                history_motifs: "<strong>Мотиви:</strong>",
-                history_rolls: "<strong>Рулонів:</strong>",
-                history_result_label: "➡️ Результат:",
-                history_images_unit_single: "зображень (1 рулон)",
-                history_rounded_from: "📈 Округлено з",
-                history_total_label: "🔪 Всього:",
-                history_total_images_unit: "зображень",
-                history_total_from_rolls: "рулонів",
-                confirm_delete_item: "Ви впевнені, що хочете видалити це обчислення з історії?",
-                alert_history_empty: "Історія вже порожня!",
-                confirm_clear_history: "Ви впевнені, що хочете видалити всю історію ({count} обчислень)?",
-                copied_text: "✅ Скопійовано:",
-                detailed_result_text: "📊 Точний результат: {exact} (+{diff} зображень)",
-                total_result_text: "🔪 Всього {rolls} рулонів: {total} зображень ({single} × {rolls})",
-                error_invalid_sleeve: "Значення валу має бути більше нуля!"
-            },
-            ru: {
-                page_title: "Калькулятор Изображений - SENTREX",
-                app_title: "📊 Калькулятор Изображений - SENTREX v1.0.5",
-                help_button: "❓ Как это работает?",
-                help_button_title: "Показать помощь",
-                theme_toggle_title: "Сменить тему",
-                help_box_title: "ℹ️ Как это работает?",
-                help_meters: "<strong>Метры:</strong> Длина печатного рулона бумаги (напр. 6289м)",
-                help_sleeve: "<strong>Вал (Sleeve):</strong> диаметр гильзы в сантиметрах (напр. 59см)",
-                help_motifs: "<strong>Количество мотивов:</strong> Сколько изображений помещается на одной гильзе (напр. 2)",
-                help_formula: "<strong>Формула:</strong> ((Метры / Вал) × 100) × Количество мотивов = Количество изображений",
-                card_header: "Рассчитать количество изображений",
-                config_header: "⚙️ КОНФИГУРАЦИЯ (установить раз на смену)",
-                sleeve_label: "🔧 Вал (см)",
-                sleeve_placeholder: "59.0",
-                motifs_label: "🎨 Мотивы",
-                motifs_placeholder: "2",
-                rolls_label: "🔪 Рулонов",
-                rolls_placeholder: "1",
-                meters_label: "📏 Метры (м)",
-                meters_placeholder: "6289",
-                rounding_label: "📈 Округлять вверх (мин. +100, макс. +200)",
-                rounding_desc: "Округляет до полной сотни, добавляя минимум 100, максимум 200 изображений",
-                result_label_single: "Результат - 1 рулон",
-                result_unit: "Изображений",
-                copy_button: "📋 Скопировать результат (формат системы)",
-                calculate_button: "🔢 Рассчитать",
-                stats_today: "📊 Сегодня расчётов",
-                stats_total_images: "🎯 Всего изображений",
-                stats_avg_roll: "📏 Средний рулон",
-                history_title: "📜 История расчётов",
-                clear_history_button: "🗑️ Очистить историю",
-                empty_history: "История расчётов пуста. Сделайте первый расчёт!",
-                history_delete_button: "🗑️ Удалить",
-                history_meters: "<strong>Метры:</strong>",
-                history_sleeve: "<strong>Вал:</strong>",
-                history_motifs: "<strong>Мотивы:</strong>",
-                history_rolls: "<strong>Рулонов:</strong>",
-                history_result_label: "➡️ Результат:",
-                history_images_unit_single: "изображений (1 рулон)",
-                history_rounded_from: "📈 Округлено с",
-                history_total_label: "🔪 Всего:",
-                history_total_images_unit: "изображений",
-                history_total_from_rolls: "рулонов",
-                confirm_delete_item: "Вы уверены, что хотите удалить этот расчёт из истории?",
-                alert_history_empty: "История уже пуста!",
-                confirm_clear_history: "Вы уверены, что хотите удалить всю историю ({count} расчётов)?",
-                copied_text: "✅ Скопировано:",
-                detailed_result_text: "📊 Точный результат: {exact} (+{diff} изображений)",
-                total_result_text: "🔪 Всего {rolls} рулонов: {total} изображений ({single} × {rolls})",
-                error_invalid_sleeve: "Значение вала должно быть больше нуля!"
+        let currentTab = 'obrazki';
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('obrazkiTab').classList.remove('active');
+            document.getElementById('rolkiTab').classList.remove('active');
+
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+            // Add active to clicked button
+            event.target.classList.add('active');
+
+            currentTab = tabName;
+
+            // Show/hide language selector based on tab
+            if (tabName === 'obrazki') {
+                document.getElementById('languageSelectorObrazki').style.display = 'flex';
+                document.getElementById('helpButtonObrazki').style.display = 'block';
+            } else {
+                document.getElementById('languageSelectorObrazki').style.display = 'none';
+                document.getElementById('helpButtonObrazki').style.display = 'none';
             }
-        };
-        
-        let currentLang = 'pl';
-        
-        function setLanguage(lang) {
-            if (!translations[lang]) return;
-            currentLang = lang;
-            localStorage.setItem('language', lang);
-            
-            document.querySelectorAll('[data-translate-key]').forEach(el => {
-                const key = el.dataset.translateKey;
-                if (translations[lang][key]) {
-                    el.innerHTML = translations[lang][key];
-                }
-            });
 
-            document.querySelectorAll('[data-translate-title-key]').forEach(el => {
-                const key = el.dataset.translateTitleKey;
-                if (translations[lang][key]) {
-                    el.title = translations[lang][key];
-                }
-            });
-            
-            document.querySelectorAll('[data-translate-placeholder-key]').forEach(el => {
-                const key = el.dataset.translatePlaceholderKey;
-                if (translations[lang][key]) {
-                    el.placeholder = translations[lang][key];
-                }
-            });
-            
-            document.querySelectorAll('.lang-flag').forEach(flag => {
-                flag.classList.toggle('active', flag.dataset.lang === lang);
-            });
-            
-            // Przerenderuj historię, aby zastosować tłumaczenia
-            renderHistory();
-
-            // *** POPRAWKA: Przetłumacz istniejący wynik, jeśli jest widoczny ***
-            const resultBox = document.getElementById('resultBox');
-            if (resultBox.style.display === 'block' && history.length > 0) {
-                const lastCalc = history[0];
-                const resultDetails = document.getElementById('resultDetails');
-                const resultTotal = document.getElementById('resultTotal');
-                const resultTotalText = document.getElementById('resultTotalText');
-
-                // Przetłumacz szczegóły o zaokrągleniu
-                if (lastCalc.zaokraglono) {
-                    const roznica = lastCalc.wynikKońcowy - lastCalc.wynikDokładny;
-                    resultDetails.innerHTML = translations[currentLang].detailed_result_text
-                        .replace('{exact}', lastCalc.wynikDokładny.toLocaleString('pl-PL'))
-                        .replace('{diff}', roznica);
-                } else {
-                    resultDetails.innerHTML = '';
-                }
-
-                // Przetłumacz podsumowanie dla wielu rolek
-                if (lastCalc.rolki > 1) {
-                    resultTotal.style.display = 'block';
-                    resultTotalText.textContent = translations[currentLang].total_result_text
-                        .replace(/{rolls}/g, lastCalc.rolki)
-                        .replace('{total}', lastCalc.wynikLacznie.toLocaleString('pl-PL'))
-                        .replace('{single}', lastCalc.wynikKońcowy.toLocaleString('pl-PL'));
-                } else {
-                    resultTotal.style.display = 'none';
-                }
-            }
+            // Save current tab
+            localStorage.setItem('currentTab', tabName);
         }
 
-        function loadLanguage() {
-            const savedLang = localStorage.getItem('language');
-            if (savedLang && translations[savedLang]) {
-                setLanguage(savedLang);
-            } else {
-                setLanguage('pl');
+        // Load last tab on page load
+        function loadCurrentTab() {
+            const savedTab = localStorage.getItem('currentTab') || 'obrazki';
+            if (savedTab === 'rolki') {
+                document.querySelector('.tab-button.active').classList.remove('active');
+                document.querySelectorAll('.tab-button')[1].classList.add('active');
+                document.getElementById('obrazkiTab').classList.remove('active');
+                document.getElementById('rolkiTab').classList.add('active');
+                currentTab = 'rolki';
+                document.getElementById('languageSelectorObrazki').style.display = 'none';
+                document.getElementById('helpButtonObrazki').style.display = 'none';
             }
         }
 
         // =================================================================
-        // LOGIKA APLIKACJI
+        // THEME TOGGLE (SHARED)
         // =================================================================
-        let history = [];
-        let lastResult = 0;
-
-        function loadHistory() {
-            const saved = localStorage.getItem('obrazki_history');
-            if (saved) {
-                try {
-                    history = JSON.parse(saved);
-                    renderHistory();
-                } catch (e) {
-                    console.error('Błąd wczytywania historii:', e);
-                    history = [];
-                }
-            }
-        }
-
-        function saveHistory() {
-            localStorage.setItem('obrazki_history', JSON.stringify(history));
-        }
-
-        function calculate(event) {
-            event.preventDefault();
-
-            const metry = parseFloat(document.getElementById('metry').value);
-            const walek = parseFloat(document.getElementById('walek').value);
-            const motywy = parseInt(document.getElementById('motywy').value);
-            const zaokraglaj = document.getElementById('zaokraglaj').checked;
-            const rolki = parseInt(document.getElementById('rolki').value) || 1;
-
-            if (walek <= 0) {
-                alert(translations[currentLang].error_invalid_sleeve);
-                return;
-            }
-
-            const wynikDokładny = Math.floor(((metry / walek) * 100) * motywy);
-            let wynikKońcowy = wynikDokładny;
-            let zaokraglono = false;
-
-            if (zaokraglaj) {
-                const doDodania = 100 + (100 - (wynikDokładny % 100)) % 100;
-                wynikKońcowy = wynikDokładny + doDodania;
-                zaokraglono = true;
-            }
-
-            lastResult = wynikKońcowy;
-            const wynikLacznie = wynikKońcowy * rolki;
-
-            const resultBox = document.getElementById('resultBox');
-            const resultValue = document.getElementById('resultValue');
-            const resultDetails = document.getElementById('resultDetails');
-            const resultTotal = document.getElementById('resultTotal');
-            
-            resultBox.style.display = 'block';
-            resultValue.textContent = wynikKońcowy.toLocaleString('pl-PL');
-            
-            if (zaokraglono) {
-                const roznica = wynikKońcowy - wynikDokładny;
-                resultDetails.innerHTML = translations[currentLang].detailed_result_text
-                    .replace('{exact}', wynikDokładny.toLocaleString('pl-PL'))
-                    .replace('{diff}', roznica);
-            } else {
-                resultDetails.innerHTML = '';
-            }
-
-            if (rolki > 1) {
-                resultTotal.style.display = 'block';
-                document.getElementById('resultTotalText').textContent = translations[currentLang].total_result_text
-                    .replace(/{rolls}/g, rolki)
-                    .replace('{total}', wynikLacznie.toLocaleString('pl-PL'))
-                    .replace('{single}', wynikKońcowy.toLocaleString('pl-PL'));
-            } else {
-                resultTotal.style.display = 'none';
-            }
-            
-            resultValue.style.transform = 'scale(0)';
-            setTimeout(() => {
-                resultValue.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-                resultValue.style.transform = 'scale(1)';
-            }, 10);
-
-            const historyItem = {
-                id: Date.now(),
-                metry, walek, motywy, rolki, wynikDokładny, wynikKońcowy, wynikLacznie, zaokraglono,
-                timestamp: new Date().toLocaleString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
-            };
-
-            history.unshift(historyItem);
-            if (history.length > 50) history = history.slice(0, 50);
-
-            saveHistory();
-            renderHistory();
-            updateStats();
-        }
-
-        function copyResult(event) {
-            const formatted = (lastResult / 1000).toFixed(1);
-            navigator.clipboard.writeText(formatted).then(() => {
-                const btn = event.target.closest('.btn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `${translations[currentLang].copied_text} ${formatted}`;
-                btn.style.background = 'rgba(76, 175, 80, 0.3)';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = 'rgba(255,255,255,0.2)';
-                }, 2000);
-            }).catch(err => console.error('Błąd kopiowania:', err));
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('historyContainer');
-            const langDict = translations[currentLang];
-
-            if (history.length === 0) {
-                container.innerHTML = `<div class="empty-history">${langDict.empty_history}</div>`;
-                return;
-            }
-
-            container.innerHTML = history.map(item => {
-                const wynikDoWyswietlenia = item.wynikKońcowy || item.wynik;
-                let wynikHTML = '';
-
-                if (item.zaokraglono) {
-                    const roznica = item.wynikKońcowy - item.wynikDokładny;
-                    wynikHTML = `
-                        <div class="history-result">
-                            ${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}
-                            <span style="font-size: 0.9rem; opacity: 0.7; display: block; margin-top: 0.3rem;">
-                               ${langDict.history_rounded_from} ${item.wynikDokładny.toLocaleString('pl-PL')} (+${roznica})
-                            </span>
-                        </div>`;
-                } else {
-                    wynikHTML = `<div class="history-result">${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}</div>`;
-                }
-
-                if (item.rolki > 1) {
-                    wynikHTML += `
-                        <div style="margin-top: 0.8rem; padding: 0.8rem; background: rgba(76, 175, 80, 0.1); border-radius: 5px; border-left: 3px solid #4caf50;">
-                            <strong style="color: #4caf50;">${langDict.history_total_label} ${item.wynikLacznie.toLocaleString('pl-PL')} ${langDict.history_total_images_unit}</strong>
-                            <span style="font-size: 0.9rem; color: var(--text-secondary); display: block; margin-top: 0.2rem;">
-                                (${wynikDoWyswietlenia.toLocaleString('pl-PL')} × ${item.rolki} ${langDict.history_total_from_rolls})
-                            </span>
-                        </div>`;
-                }
-                
-                return `
-                    <div class="history-item">
-                        <div class="history-item-header">
-                            <div class="history-item-time">📅 ${item.timestamp}</div>
-                            <button class="history-item-delete" onclick="deleteHistoryItem(${item.id})">${langDict.history_delete_button}</button>
-                        </div>
-                        <div class="history-item-data">
-                            <div class="history-data-item">${langDict.history_meters} ${item.metry.toLocaleString('pl-PL')} m</div>
-                            <div class="history-data-item">${langDict.history_sleeve} ${item.walek} cm</div>
-                            <div class="history-data-item">${langDict.history_motifs} ${item.motywy}</div>
-                            ${item.rolki > 1 ? `<div class="history-data-item">${langDict.history_rolls} ${item.rolki}</div>` : ''}
-                        </div>
-                        ${wynikHTML}
-                    </div>`;
-            }).join('');
-        }
-
-        function updateStats() {
-            const today = new Date().toLocaleDateString('pl-PL');
-            const todayCalculations = history.filter(item => new Date(item.timestamp.split(',')[0].split('.').reverse().join('-')).toLocaleDateString('pl-PL') === today);
-            
-            const statToday = todayCalculations.length;
-            const statTotal = history.reduce((sum, item) => sum + (item.wynikLacznie || item.wynikKońcowy || item.wynik || 0), 0);
-            const statAvg = history.length > 0 ? Math.round(history.reduce((sum, item) => sum + item.metry, 0) / history.length) : 0;
-
-            document.getElementById('statToday').textContent = statToday;
-            document.getElementById('statTotal').textContent = statTotal.toLocaleString('pl-PL');
-            document.getElementById('statAvg').textContent = statAvg.toLocaleString('pl-PL') + ' m';
-        }
-
-        function deleteHistoryItem(id) {
-            if (confirm(translations[currentLang].confirm_delete_item)) {
-                history = history.filter(item => item.id !== id);
-                saveHistory();
-                renderHistory();
-                updateStats();
-            }
-        }
-
-        function clearHistory() {
-            if (history.length === 0) {
-                alert(translations[currentLang].alert_history_empty);
-                return;
-            }
-
-            const confirmMsg = translations[currentLang].confirm_clear_history.replace('{count}', history.length);
-            if (confirm(confirmMsg)) {
-                history = [];
-                saveHistory();
-                renderHistory();
-                updateStats();
-                document.getElementById('resultBox').style.display = 'none';
-                document.getElementById('calculatorForm').reset();
-                document.getElementById('rolki').value = 1;
-            }
-        }
-
-        function toggleHelp() {
-            const helpBox = document.getElementById('helpBox');
-            helpBox.style.display = (helpBox.style.display === 'none' || helpBox.style.display === '') ? 'block' : 'none';
-        }
-
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
@@ -1017,11 +1287,893 @@
             }
         }
 
-        // Inicjalizacja
-        loadTheme();
-        loadHistory();
-        loadLanguage();
-        updateStats();
+        // =================================================================
+        // OBRAZKI APP
+        // =================================================================
+        const ObrazkiApp = {
+            translations: {
+                pl: {
+                    page_title: "Kalkulator Obrazków - SENTREX",
+                    app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.5",
+                    help_button: "❓ Jak to działa?",
+                    help_button_title: "Pokaż pomoc",
+                    theme_toggle_title: "Zmień motyw",
+                    help_box_title: "ℹ️ Jak to działa?",
+                    help_meters: "<strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)",
+                    help_sleeve: "<strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)",
+                    help_motifs: "<strong>Ilość motywów:</strong> Ile obrazków mieści się na jednym sleeve (np. 2)",
+                    help_formula: "<strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków",
+                    card_header: "Oblicz liczbę obrazków",
+                    config_header: "⚙️ KONFIGURACJA (ustaw raz na zmianę)",
+                    sleeve_label: "🔧 Wałek (cm)",
+                    sleeve_placeholder: "59.0",
+                    motifs_label: "🎨 Motywy",
+                    motifs_placeholder: "2",
+                    rolls_label: "🔪 Rolek",
+                    rolls_placeholder: "1",
+                    meters_label: "📏 Metry (m)",
+                    meters_placeholder: "6289",
+                    rounding_label: "📈 Zaokrąglaj w górę (min. +100, max. +200)",
+                    rounding_desc: "Zaokrągla do pełnej setki dodając minimum 100, maksimum 200 obrazków",
+                    result_label_single: "Wynik - 1 rolka",
+                    result_unit: "Obrazków",
+                    copy_button: "📋 Skopiuj wynik (format systemu)",
+                    calculate_button: "🔢 Oblicz",
+                    stats_today: "📊 Ilość obliczeń",
+                    stats_total_images: "🎯 Łącznie obrazków",
+                    stats_avg_roll: "📏 Średnia rolka",
+                    history_title: "📜 Historia obliczeń",
+                    clear_history_button: "🗑️ Wyczyść historię",
+                    empty_history: "Brak historii obliczeń. Wykonaj pierwsze obliczenie!",
+                    history_delete_button: "🗑️ Usuń",
+                    history_meters: "<strong>Metry:</strong>",
+                    history_sleeve: "<strong>Wałek:</strong>",
+                    history_motifs: "<strong>Motywy:</strong>",
+                    history_rolls: "<strong>Rolek:</strong>",
+                    history_result_label: "➡️ Wynik:",
+                    history_images_unit_single: "obrazków (1 rolka)",
+                    history_rounded_from: "📈 Zaokrąglono z",
+                    history_total_label: "🔪 Łącznie:",
+                    history_total_images_unit: "obrazków",
+                    history_total_from_rolls: "rolek",
+                    confirm_delete_item: "Czy na pewno chcesz usunąć to obliczenie z historii?",
+                    alert_history_empty: "Historia jest już pusta!",
+                    confirm_clear_history: "Czy na pewno chcesz usunąć całą historię ({count} obliczeń)?",
+                    copied_text: "✅ Skopiowano:",
+                    detailed_result_text: "📊 Dokładny wynik: {exact} (+{diff} obrazków)",
+                    total_result_text: "🔪 Łącznie {rolls} rolek: {total} obrazków ({single} × {rolls})",
+                    error_invalid_sleeve: "Wartość wałka musi być większa od zera!"
+                },
+                ua: {
+                    page_title: "Калькулятор Зображень - SENTREX",
+                    app_title: "📊 Калькулятор Зображень - SENTREX v1.0.5",
+                    help_button: "❓ Як це працює?",
+                    help_button_title: "Показати допомогу",
+                    theme_toggle_title: "Змінити тему",
+                    help_box_title: "ℹ️ Як це працює?",
+                    help_meters: "<strong>Метри:</strong> Довжина друкованого рулону паперу (напр. 6289м)",
+                    help_sleeve: "<strong>Валек (Sleeve):</strong> діаметр гільзи в сантиметрах (напр. 59см)",
+                    help_motifs: "<strong>Кількість мотивів:</strong> Скільки зображень вміщується на одній гільзі (напр. 2)",
+                    help_formula: "<strong>Формула:</strong> ((Метри / Валек) × 100) × Кількість мотивів = Кількість зображень",
+                    card_header: "Обчислити кількість зображень",
+                    config_header: "⚙️ КОНФІГУРАЦІЯ (встановити раз на зміну)",
+                    sleeve_label: "🔧 Валек (см)",
+                    sleeve_placeholder: "59.0",
+                    motifs_label: "🎨 Мотиви",
+                    motifs_placeholder: "2",
+                    rolls_label: "🔪 Рулонів",
+                    rolls_placeholder: "1",
+                    meters_label: "📏 Метри (м)",
+                    meters_placeholder: "6289",
+                    rounding_label: "📈 Округлювати вгору (мін. +100, макс. +200)",
+                    rounding_desc: "Округлює до повної сотні, додаючи мінімум 100, максимум 200 зображень",
+                    result_label_single: "Результат - 1 рулон",
+                    result_unit: "Зображень",
+                    copy_button: "📋 Скопіювати результат (формат системи)",
+                    calculate_button: "🔢 Обчислити",
+                    stats_today: "📊 Кількість обчислень",
+                    stats_total_images: "🎯 Всього зображень",
+                    stats_avg_roll: "📏 Середній рулон",
+                    history_title: "📜 Історія обчислень",
+                    clear_history_button: "🗑️ Очистити історію",
+                    empty_history: "Історія обчислень порожня. Зробіть перше обчислення!",
+                    history_delete_button: "🗑️ Видалити",
+                    history_meters: "<strong>Метри:</strong>",
+                    history_sleeve: "<strong>Валек:</strong>",
+                    history_motifs: "<strong>Мотиви:</strong>",
+                    history_rolls: "<strong>Рулонів:</strong>",
+                    history_result_label: "➡️ Результат:",
+                    history_images_unit_single: "зображень (1 рулон)",
+                    history_rounded_from: "📈 Округлено з",
+                    history_total_label: "🔪 Всього:",
+                    history_total_images_unit: "зображень",
+                    history_total_from_rolls: "рулонів",
+                    confirm_delete_item: "Ви впевнені, що хочете видалити це обчислення з історії?",
+                    alert_history_empty: "Історія вже порожня!",
+                    confirm_clear_history: "Ви впевнені, що хочете видалити всю історію ({count} обчислень)?",
+                    copied_text: "✅ Скопійовано:",
+                    detailed_result_text: "📊 Точний результат: {exact} (+{diff} зображень)",
+                    total_result_text: "🔪 Всього {rolls} рулонів: {total} зображень ({single} × {rolls})",
+                    error_invalid_sleeve: "Значення валу має бути більше нуля!"
+                },
+                ru: {
+                    page_title: "Калькулятор Изображений - SENTREX",
+                    app_title: "📊 Калькулятор Изображений - SENTREX v1.0.5",
+                    help_button: "❓ Как это работает?",
+                    help_button_title: "Показать помощь",
+                    theme_toggle_title: "Сменить тему",
+                    help_box_title: "ℹ️ Как это работает?",
+                    help_meters: "<strong>Метры:</strong> Длина печатного рулона бумаги (напр. 6289м)",
+                    help_sleeve: "<strong>Вал (Sleeve):</strong> диаметр гильзы в сантиметрах (напр. 59см)",
+                    help_motifs: "<strong>Количество мотивов:</strong> Сколько изображений помещается на одной гильзе (напр. 2)",
+                    help_formula: "<strong>Формула:</strong> ((Метры / Вал) × 100) × Количество мотивов = Количество изображений",
+                    card_header: "Рассчитать количество изображений",
+                    config_header: "⚙️ КОНФИГУРАЦИЯ (установить раз на смену)",
+                    sleeve_label: "🔧 Вал (см)",
+                    sleeve_placeholder: "59.0",
+                    motifs_label: "🎨 Мотивы",
+                    motifs_placeholder: "2",
+                    rolls_label: "🔪 Рулонов",
+                    rolls_placeholder: "1",
+                    meters_label: "📏 Метры (м)",
+                    meters_placeholder: "6289",
+                    rounding_label: "📈 Округлять вверх (мин. +100, макс. +200)",
+                    rounding_desc: "Округляет до полной сотни, добавляя минимум 100, максимум 200 изображений",
+                    result_label_single: "Результат - 1 рулон",
+                    result_unit: "Изображений",
+                    copy_button: "📋 Скопировать результат (формат системы)",
+                    calculate_button: "🔢 Рассчитать",
+                    stats_today: "📊 Количество расчётов",
+                    stats_total_images: "🎯 Всего изображений",
+                    stats_avg_roll: "📏 Средний рулон",
+                    history_title: "📜 История расчётов",
+                    clear_history_button: "🗑️ Очистить историю",
+                    empty_history: "История расчётов пуста. Сделайте первый расчёт!",
+                    history_delete_button: "🗑️ Удалить",
+                    history_meters: "<strong>Метры:</strong>",
+                    history_sleeve: "<strong>Вал:</strong>",
+                    history_motifs: "<strong>Мотивы:</strong>",
+                    history_rolls: "<strong>Рулонов:</strong>",
+                    history_result_label: "➡️ Результат:",
+                    history_images_unit_single: "изображений (1 рулон)",
+                    history_rounded_from: "📈 Округлено с",
+                    history_total_label: "🔪 Всего:",
+                    history_total_images_unit: "изображений",
+                    history_total_from_rolls: "рулонов",
+                    confirm_delete_item: "Вы уверены, что хотите удалить этот расчёт из истории?",
+                    alert_history_empty: "История уже пуста!",
+                    confirm_clear_history: "Вы уверены, что хотите удалить всю историю ({count} расчётов)?",
+                    copied_text: "✅ Скопировано:",
+                    detailed_result_text: "📊 Точный результат: {exact} (+{diff} изображений)",
+                    total_result_text: "🔪 Всего {rolls} рулонов: {total} изображений ({single} × {rolls})",
+                    error_invalid_sleeve: "Значение вала должно быть больше нуля!"
+                }
+            },
+
+            currentLang: 'pl',
+            history: [],
+            lastResult: 0,
+
+            setLanguage(lang) {
+                if (!this.translations[lang]) return;
+                this.currentLang = lang;
+                localStorage.setItem('obrazki_language', lang);
+
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (this.translations[lang][key]) {
+                        el.innerHTML = this.translations[lang][key];
+                    }
+                });
+
+                document.querySelectorAll('[data-translate-title-key]').forEach(el => {
+                    const key = el.dataset.translateTitleKey;
+                    if (this.translations[lang][key]) {
+                        el.title = this.translations[lang][key];
+                    }
+                });
+
+                document.querySelectorAll('[data-translate-placeholder-key]').forEach(el => {
+                    const key = el.dataset.translatePlaceholderKey;
+                    if (this.translations[lang][key]) {
+                        el.placeholder = this.translations[lang][key];
+                    }
+                });
+
+                document.querySelectorAll('.lang-flag').forEach(flag => {
+                    flag.classList.toggle('active', flag.dataset.lang === lang);
+                });
+
+                this.renderHistory();
+
+                const resultBox = document.getElementById('resultBoxObrazki');
+                if (resultBox.style.display === 'block' && this.history.length > 0) {
+                    const lastCalc = this.history[0];
+                    const resultDetails = document.getElementById('resultDetailsObrazki');
+                    const resultTotal = document.getElementById('resultTotalObrazki');
+                    const resultTotalText = document.getElementById('resultTotalTextObrazki');
+
+                    if (lastCalc.zaokraglono) {
+                        const roznica = lastCalc.wynikKońcowy - lastCalc.wynikDokładny;
+                        resultDetails.innerHTML = this.translations[this.currentLang].detailed_result_text
+                            .replace('{exact}', lastCalc.wynikDokładny.toLocaleString('pl-PL'))
+                            .replace('{diff}', roznica);
+                    } else {
+                        resultDetails.innerHTML = '';
+                    }
+
+                    if (lastCalc.rolki > 1) {
+                        resultTotal.style.display = 'block';
+                        resultTotalText.textContent = this.translations[this.currentLang].total_result_text
+                            .replace(/{rolls}/g, lastCalc.rolki)
+                            .replace('{total}', lastCalc.wynikLacznie.toLocaleString('pl-PL'))
+                            .replace('{single}', lastCalc.wynikKońcowy.toLocaleString('pl-PL'));
+                    } else {
+                        resultTotal.style.display = 'none';
+                    }
+                }
+            },
+
+            loadLanguage() {
+                const savedLang = localStorage.getItem('obrazki_language');
+                if (savedLang && this.translations[savedLang]) {
+                    this.setLanguage(savedLang);
+                } else {
+                    this.setLanguage('pl');
+                }
+            },
+
+            loadHistory() {
+                const saved = localStorage.getItem('obrazki_history');
+                if (saved) {
+                    try {
+                        this.history = JSON.parse(saved);
+                        this.renderHistory();
+                    } catch (e) {
+                        console.error('Błąd wczytywania historii:', e);
+                        this.history = [];
+                    }
+                }
+            },
+
+            saveHistory() {
+                localStorage.setItem('obrazki_history', JSON.stringify(this.history));
+            },
+
+            calculate(event) {
+                event.preventDefault();
+
+                const metry = parseFloat(document.getElementById('metryObrazki').value);
+                const walek = parseFloat(document.getElementById('walekObrazki').value);
+                const motywy = parseInt(document.getElementById('motywyObrazki').value);
+                const zaokraglaj = document.getElementById('zaokraglajObrazki').checked;
+                const rolki = parseInt(document.getElementById('rolkiObrazki').value) || 1;
+
+                if (walek <= 0) {
+                    alert(this.translations[this.currentLang].error_invalid_sleeve);
+                    return;
+                }
+
+                const wynikDokładny = Math.floor(((metry / walek) * 100) * motywy);
+                let wynikKońcowy = wynikDokładny;
+                let zaokraglono = false;
+
+                if (zaokraglaj) {
+                    const doDodania = 100 + (100 - (wynikDokładny % 100)) % 100;
+                    wynikKońcowy = wynikDokładny + doDodania;
+                    zaokraglono = true;
+                }
+
+                this.lastResult = wynikKońcowy;
+                const wynikLacznie = wynikKońcowy * rolki;
+
+                const resultBox = document.getElementById('resultBoxObrazki');
+                const resultValue = document.getElementById('resultValueObrazki');
+                const resultDetails = document.getElementById('resultDetailsObrazki');
+                const resultTotal = document.getElementById('resultTotalObrazki');
+
+                resultBox.style.display = 'block';
+                resultValue.textContent = wynikKońcowy.toLocaleString('pl-PL');
+
+                if (zaokraglono) {
+                    const roznica = wynikKońcowy - wynikDokładny;
+                    resultDetails.innerHTML = this.translations[this.currentLang].detailed_result_text
+                        .replace('{exact}', wynikDokładny.toLocaleString('pl-PL'))
+                        .replace('{diff}', roznica);
+                } else {
+                    resultDetails.innerHTML = '';
+                }
+
+                if (rolki > 1) {
+                    resultTotal.style.display = 'block';
+                    document.getElementById('resultTotalTextObrazki').textContent = this.translations[this.currentLang].total_result_text
+                        .replace(/{rolls}/g, rolki)
+                        .replace('{total}', wynikLacznie.toLocaleString('pl-PL'))
+                        .replace('{single}', wynikKońcowy.toLocaleString('pl-PL'));
+                } else {
+                    resultTotal.style.display = 'none';
+                }
+
+                resultValue.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    resultValue.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    resultValue.style.transform = 'scale(1)';
+                }, 10);
+
+                const historyItem = {
+                    id: Date.now(),
+                    metry, walek, motywy, rolki, wynikDokładny, wynikKońcowy, wynikLacznie, zaokraglono,
+                    timestamp: new Date().toLocaleString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                };
+
+                this.history.unshift(historyItem);
+                if (this.history.length > 50) this.history = this.history.slice(0, 50);
+
+                this.saveHistory();
+                this.renderHistory();
+                this.updateStats();
+            },
+
+            copyResult(event) {
+                const formatted = (this.lastResult / 1000).toFixed(1);
+
+                // Copy to clipboard
+                navigator.clipboard.writeText(formatted).then(() => {
+                    const btn = event.target.closest('.btn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = `${this.translations[this.currentLang].copied_text} ${formatted}`;
+                    btn.style.background = 'rgba(76, 175, 80, 0.3)';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = 'rgba(255,255,255,0.2)';
+                    }, 2000);
+
+                    // AUTO-INSERT INTO ROLKI APP AND SWITCH TAB
+                    // Convert format: if result is 25.5, insert 25500 (multiply by 1000)
+                    const valueForRolki = this.lastResult;
+                    document.getElementById('imagesRolki').value = valueForRolki;
+
+                    // Switch to Rolki tab
+                    setTimeout(() => {
+                        document.querySelector('.tab-button.active').classList.remove('active');
+                        document.querySelectorAll('.tab-button')[1].classList.add('active');
+                        document.getElementById('obrazkiTab').classList.remove('active');
+                        document.getElementById('rolkiTab').classList.add('active');
+                        currentTab = 'rolki';
+                        document.getElementById('languageSelectorObrazki').style.display = 'none';
+                        document.getElementById('helpButtonObrazki').style.display = 'none';
+
+                        // Focus on the WEIGHT field (not images) so user can immediately enter weight
+                        document.getElementById('weightRolki').focus();
+                    }, 500);
+                }).catch(err => console.error('Błąd kopiowania:', err));
+            },
+
+            renderHistory() {
+                const container = document.getElementById('historyContainerObrazki');
+                const langDict = this.translations[this.currentLang];
+
+                if (this.history.length === 0) {
+                    container.innerHTML = `<div class="empty-history">${langDict.empty_history}</div>`;
+                    return;
+                }
+
+                container.innerHTML = this.history.map(item => {
+                    const wynikDoWyswietlenia = item.wynikKońcowy || item.wynik;
+                    let wynikHTML = '';
+
+                    if (item.zaokraglono) {
+                        const roznica = item.wynikKońcowy - item.wynikDokładny;
+                        wynikHTML = `
+                            <div class="history-result">
+                                ${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}
+                                <span style="font-size: 0.9rem; opacity: 0.7; display: block; margin-top: 0.3rem;">
+                                   ${langDict.history_rounded_from} ${item.wynikDokładny.toLocaleString('pl-PL')} (+${roznica})
+                                </span>
+                            </div>`;
+                    } else {
+                        wynikHTML = `<div class="history-result">${langDict.history_result_label} ${wynikDoWyswietlenia.toLocaleString('pl-PL')} ${langDict.history_images_unit_single}</div>`;
+                    }
+
+                    if (item.rolki > 1) {
+                        wynikHTML += `
+                            <div style="margin-top: 0.8rem; padding: 0.8rem; background: rgba(76, 175, 80, 0.1); border-radius: 5px; border-left: 3px solid #4caf50;">
+                                <strong style="color: #4caf50;">${langDict.history_total_label} ${item.wynikLacznie.toLocaleString('pl-PL')} ${langDict.history_total_images_unit}</strong>
+                                <span style="font-size: 0.9rem; color: var(--text-secondary); display: block; margin-top: 0.2rem;">
+                                    (${wynikDoWyswietlenia.toLocaleString('pl-PL')} × ${item.rolki} ${langDict.history_total_from_rolls})
+                                </span>
+                            </div>`;
+                    }
+
+                    return `
+                        <div class="history-item">
+                            <div class="history-item-header">
+                                <div class="history-item-time">📅 ${item.timestamp}</div>
+                                <button class="history-item-delete" onclick="ObrazkiApp.deleteHistoryItem(${item.id})">${langDict.history_delete_button}</button>
+                            </div>
+                            <div class="history-item-data">
+                                <div class="history-data-item">${langDict.history_meters} ${item.metry.toLocaleString('pl-PL')} m</div>
+                                <div class="history-data-item">${langDict.history_sleeve} ${item.walek} cm</div>
+                                <div class="history-data-item">${langDict.history_motifs} ${item.motywy}</div>
+                                ${item.rolki > 1 ? `<div class="history-data-item">${langDict.history_rolls} ${item.rolki}</div>` : ''}
+                            </div>
+                            ${wynikHTML}
+                        </div>`;
+                }).join('');
+            },
+
+            updateStats() {
+                const statToday = this.history.length;
+                const statTotal = this.history.reduce((sum, item) => sum + (item.wynikLacznie || item.wynikKońcowy || item.wynik || 0), 0);
+                const statAvg = this.history.length > 0 ? Math.round(this.history.reduce((sum, item) => sum + item.metry, 0) / this.history.length) : 0;
+
+                document.getElementById('statTodayObrazki').textContent = statToday;
+                document.getElementById('statTotalObrazki').textContent = statTotal.toLocaleString('pl-PL');
+                document.getElementById('statAvgObrazki').textContent = statAvg.toLocaleString('pl-PL') + ' m';
+            },
+
+            deleteHistoryItem(id) {
+                if (confirm(this.translations[this.currentLang].confirm_delete_item)) {
+                    this.history = this.history.filter(item => item.id !== id);
+                    this.saveHistory();
+                    this.renderHistory();
+                    this.updateStats();
+                }
+            },
+
+            clearHistory() {
+                if (this.history.length === 0) {
+                    alert(this.translations[this.currentLang].alert_history_empty);
+                    return;
+                }
+
+                const confirmMsg = this.translations[this.currentLang].confirm_clear_history.replace('{count}', this.history.length);
+                if (confirm(confirmMsg)) {
+                    this.history = [];
+                    this.saveHistory();
+                    this.renderHistory();
+                    this.updateStats();
+                    document.getElementById('resultBoxObrazki').style.display = 'none';
+                    document.getElementById('calculatorFormObrazki').reset();
+                    document.getElementById('rolkiObrazki').value = 1;
+                }
+            }
+        };
+
+        function toggleHelpObrazki() {
+            const helpBox = document.getElementById('helpBoxObrazki');
+            helpBox.style.display = (helpBox.style.display === 'none' || helpBox.style.display === '') ? 'block' : 'none';
+        }
+
+        // =================================================================
+        // ROLKI APP
+        // =================================================================
+        class RollTracker {
+            constructor() {
+                this.rolls = this.loadFromStorage();
+                this.palletCustomSizes = this.loadPalletSizes();
+                this.currentEditingPalletIndex = null;
+                this.initElements();
+                this.attachEventListeners();
+                this.render();
+            }
+
+            initElements() {
+                this.form = document.getElementById('addRollFormRolki');
+                this.weightInput = document.getElementById('weightRolki');
+                this.imagesInput = document.getElementById('imagesRolki');
+                this.quantityInput = document.getElementById('quantityRolki');
+                this.rollsPerPalletInput = document.getElementById('rollsPerPalletRolki');
+                this.continuationMode = document.getElementById('continuationModeRolki');
+                this.lastRollNumber = document.getElementById('lastRollNumberRolki');
+                this.lastRollGroup = document.getElementById('lastRollGroupRolki');
+                this.rollsList = document.getElementById('rollsListRolki');
+                this.totalPallets = document.getElementById('totalPalletsRolki');
+                this.totalRolls = document.getElementById('totalRollsRolki');
+                this.totalWeight = document.getElementById('totalWeightRolki');
+                this.totalImages = document.getElementById('totalImagesRolki');
+                this.clearAllBtn = document.getElementById('clearAllBtnRolki');
+
+                this.editPalletModal = document.getElementById('editPalletModalRolki');
+                this.editRollsPerPallet = document.getElementById('editRollsPerPalletRolki');
+                this.modalPalletInfo = document.getElementById('modalPalletInfoRolki');
+                this.cancelEditBtn = document.getElementById('cancelEditBtnRolki');
+                this.saveEditBtn = document.getElementById('saveEditBtnRolki');
+
+                this.loadContinuationSettings();
+                this.loadPalletSettings();
+            }
+
+            attachEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                this.clearAllBtn.addEventListener('click', () => this.clearAll());
+                this.continuationMode.addEventListener('change', (e) => this.handleContinuationToggle(e));
+                this.lastRollNumber.addEventListener('change', () => this.saveContinuationSettings());
+                this.rollsPerPalletInput.addEventListener('change', () => this.savePalletSettings());
+
+                this.cancelEditBtn.addEventListener('click', () => this.closeEditModal());
+                this.saveEditBtn.addEventListener('click', () => this.saveEditPallet());
+                this.editPalletModal.addEventListener('click', (e) => {
+                    if (e.target === this.editPalletModal) {
+                        this.closeEditModal();
+                    }
+                });
+            }
+
+            handleContinuationToggle(e) {
+                if (e.target.checked) {
+                    this.lastRollGroup.style.display = 'block';
+                } else {
+                    this.lastRollGroup.style.display = 'none';
+                }
+                this.saveContinuationSettings();
+                this.render();
+            }
+
+            saveContinuationSettings() {
+                const settings = {
+                    isContinuation: this.continuationMode.checked,
+                    lastRollNumber: parseInt(this.lastRollNumber.value) || 0
+                };
+                localStorage.setItem('rolki_continuationSettings', JSON.stringify(settings));
+            }
+
+            loadContinuationSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('rolki_continuationSettings'));
+                    if (settings) {
+                        this.continuationMode.checked = settings.isContinuation;
+                        this.lastRollNumber.value = settings.lastRollNumber;
+                        if (settings.isContinuation) {
+                            this.lastRollGroup.style.display = 'block';
+                        }
+                    }
+                } catch (e) {
+                    console.error('Błąd wczytywania ustawień kontynuacji:', e);
+                }
+            }
+
+            savePalletSettings() {
+                const settings = {
+                    rollsPerPallet: parseInt(this.rollsPerPalletInput.value) || 3
+                };
+                localStorage.setItem('rolki_palletSettings', JSON.stringify(settings));
+                this.render();
+            }
+
+            loadPalletSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('rolki_palletSettings'));
+                    if (settings) {
+                        this.rollsPerPalletInput.value = settings.rollsPerPallet;
+                    }
+                } catch (e) {
+                    console.error('Błąd wczytywania ustawień palet:', e);
+                }
+            }
+
+            loadPalletSizes() {
+                try {
+                    const sizes = localStorage.getItem('rolki_palletCustomSizes');
+                    return sizes ? JSON.parse(sizes) : {};
+                } catch (e) {
+                    console.error('Błąd wczytywania rozmiarów palet:', e);
+                    return {};
+                }
+            }
+
+            savePalletSizes() {
+                try {
+                    localStorage.setItem('rolki_palletCustomSizes', JSON.stringify(this.palletCustomSizes));
+                } catch (e) {
+                    console.error('Błąd zapisu rozmiarów palet:', e);
+                }
+            }
+
+            handleSubmit(e) {
+                e.preventDefault();
+
+                const weight = parseFloat(this.weightInput.value);
+                const images = parseInt(this.imagesInput.value) || 0;
+                const quantity = parseInt(this.quantityInput.value) || 1;
+
+                if (!weight || weight <= 0) {
+                    alert('Proszę wprowadzić prawidłową wagę');
+                    return;
+                }
+
+                if (quantity <= 0) {
+                    alert('Ilość rolek musi być większa niż 0');
+                    return;
+                }
+
+                for (let i = 0; i < quantity; i++) {
+                    this.addRoll(weight, images);
+                }
+
+                this.weightInput.value = '';
+                this.imagesInput.value = '';
+                this.weightInput.focus();
+
+                this.saveToStorage();
+                this.render();
+            }
+
+            addRoll(weight, images) {
+                const roll = {
+                    id: Date.now() + Math.random(),
+                    weight: weight,
+                    images: images,
+                    timestamp: new Date().toISOString()
+                };
+                this.rolls.push(roll);
+            }
+
+            deleteRoll(id) {
+                if (confirm('Czy na pewno chcesz usunąć tę rolkę?')) {
+                    this.rolls = this.rolls.filter(roll => roll.id !== id);
+                    this.saveToStorage();
+                    this.render();
+                }
+            }
+
+            clearAll() {
+                if (confirm('Czy na pewno chcesz usunąć wszystkie rolki? Tej operacji nie można cofnąć.')) {
+                    this.rolls = [];
+                    this.palletCustomSizes = {};
+                    this.saveToStorage();
+                    this.savePalletSizes();
+                    this.render();
+                }
+            }
+
+            openEditPalletModal(palletIndex, currentSize) {
+                this.currentEditingPalletIndex = palletIndex;
+                this.editRollsPerPallet.value = currentSize;
+                this.modalPalletInfo.textContent = `Paleta #${palletIndex + 1} (obecnie ${currentSize} rolek)`;
+                this.editPalletModal.classList.add('show');
+            }
+
+            closeEditModal() {
+                this.editPalletModal.classList.remove('show');
+                this.currentEditingPalletIndex = null;
+            }
+
+            saveEditPallet() {
+                const newSize = parseInt(this.editRollsPerPallet.value);
+                if (!newSize || newSize < 1) {
+                    alert('Liczba rolek musi być większa niż 0');
+                    return;
+                }
+
+                this.palletCustomSizes[this.currentEditingPalletIndex] = newSize;
+                this.savePalletSizes();
+                this.closeEditModal();
+                this.render();
+            }
+
+            calculateSummary() {
+                const totalRolls = this.rolls.length;
+                const totalWeight = this.rolls.reduce((sum, roll) => sum + roll.weight, 0);
+                const totalImages = this.rolls.reduce((sum, roll) => sum + roll.images, 0);
+
+                const pallets = this.groupIntoPallets();
+                const totalPallets = pallets.length;
+
+                return { totalRolls, totalWeight, totalImages, totalPallets };
+            }
+
+            groupIntoPallets() {
+                if (this.rolls.length === 0) return [];
+
+                const sortedRolls = [...this.rolls].sort((a, b) =>
+                    new Date(a.timestamp) - new Date(b.timestamp)
+                );
+
+                const defaultRollsPerPallet = parseInt(this.rollsPerPalletInput.value) || 3;
+                const pallets = [];
+                let currentPalletIndex = 0;
+                let rollIndex = 0;
+
+                while (rollIndex < sortedRolls.length) {
+                    const palletSize = this.palletCustomSizes[currentPalletIndex] || defaultRollsPerPallet;
+                    const palletRolls = sortedRolls.slice(rollIndex, rollIndex + palletSize);
+
+                    if (palletRolls.length > 0) {
+                        pallets.push({
+                            index: currentPalletIndex,
+                            rolls: palletRolls,
+                            size: palletSize
+                        });
+                    }
+
+                    rollIndex += palletSize;
+                    currentPalletIndex++;
+                }
+
+                return pallets;
+            }
+
+            render() {
+                const { totalRolls, totalWeight, totalImages, totalPallets } = this.calculateSummary();
+                this.totalPallets.textContent = totalPallets;
+                this.totalRolls.textContent = totalRolls;
+                this.totalWeight.textContent = totalWeight.toFixed(2);
+                this.totalImages.textContent = totalImages;
+
+                if (totalRolls > 0) {
+                    this.clearAllBtn.style.display = 'block';
+                } else {
+                    this.clearAllBtn.style.display = 'none';
+                }
+
+                if (this.rolls.length === 0) {
+                    this.rollsList.innerHTML = '<p class="empty-message">Brak rolek. Dodaj pierwszą rolkę powyżej.</p>';
+                    return;
+                }
+
+                const pallets = this.groupIntoPallets();
+
+                const isContinuation = this.continuationMode.checked;
+                const lastRoll = parseInt(this.lastRollNumber.value) || 0;
+
+                let globalRollIndex = 0;
+                pallets.forEach(pallet => {
+                    pallet.rolls = pallet.rolls.map(roll => {
+                        const shiftNumber = globalRollIndex + 1;
+                        const orderNumber = isContinuation ? lastRoll + globalRollIndex + 1 : globalRollIndex + 1;
+                        globalRollIndex++;
+
+                        return {
+                            ...roll,
+                            shiftNumber: shiftNumber,
+                            orderNumber: orderNumber,
+                            isContinuation: isContinuation
+                        };
+                    });
+                });
+
+                const palletsForDisplay = [...pallets].reverse();
+
+                this.rollsList.innerHTML = palletsForDisplay.map(pallet => this.createPalletElement(pallet)).join('');
+
+                this.rollsList.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseFloat(e.target.dataset.id);
+                        this.deleteRoll(id);
+                    });
+                });
+
+                this.rollsList.querySelectorAll('.btn-edit-pallet').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const palletIndex = parseInt(e.target.dataset.palletIndex);
+                        const currentSize = parseInt(e.target.dataset.currentSize);
+                        this.openEditPalletModal(palletIndex, currentSize);
+                    });
+                });
+            }
+
+            createPalletElement(pallet) {
+                const palletWeight = pallet.rolls.reduce((sum, roll) => sum + roll.weight, 0);
+                const palletImages = pallet.rolls.reduce((sum, roll) => sum + roll.images, 0);
+
+                // Odwróć kolejność rolek w palecie - najnowsze na górze
+                const reversedRolls = [...pallet.rolls].reverse();
+                const rollsHtml = reversedRolls.map(roll => this.createRollElement(roll)).join('');
+
+                return `
+                    <div class="pallet-container">
+                        <div class="pallet-header">
+                            <div>
+                                <div class="pallet-title">
+                                    <span class="pallet-icon">📦</span>
+                                    <span>Paleta #${pallet.index + 1}</span>
+                                </div>
+                                <div class="pallet-summary">
+                                    <div class="pallet-stat">
+                                        <span>Rolek: <strong>${pallet.rolls.length}</strong></span>
+                                    </div>
+                                    <div class="pallet-stat">
+                                        <span>Waga: <strong>${palletWeight.toFixed(2)} kg</strong></span>
+                                    </div>
+                                    ${palletImages > 0 ? `
+                                        <div class="pallet-stat">
+                                            <span>Obrazki: <strong>${palletImages}</strong></span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="pallet-actions">
+                                <button
+                                    class="btn-edit-pallet"
+                                    data-pallet-index="${pallet.index}"
+                                    data-current-size="${pallet.rolls.length}">
+                                    Edytuj
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pallet-rolls">
+                            ${rollsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            createRollElement(roll) {
+                const date = new Date(roll.timestamp);
+                const timeString = date.toLocaleTimeString('pl-PL', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let rollNumberText;
+                if (roll.isContinuation) {
+                    rollNumberText = `
+                        <div class="roll-number-dual">
+                            <span class="order-number">Rolka (zlecenie): #${roll.orderNumber}</span>
+                            <span class="shift-number">Rolka (zmiana): #${roll.shiftNumber}</span>
+                        </div>
+                    `;
+                } else {
+                    rollNumberText = `<div class="roll-number">Rolka #${roll.orderNumber}</div>`;
+                }
+
+                return `
+                    <div class="roll-item">
+                        <div class="roll-info">
+                            ${rollNumberText}
+                            <div class="roll-details">
+                                <div class="roll-detail">
+                                    <strong>Waga:</strong> ${roll.weight.toFixed(2)} kg
+                                </div>
+                                ${roll.images > 0 ? `
+                                    <div class="roll-detail">
+                                        <strong>Obrazki:</strong> ${roll.images}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="roll-time">Dodano: ${timeString}</div>
+                        </div>
+                        <div class="roll-actions">
+                            <button class="btn-delete" data-id="${roll.id}">
+                                Usuń
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            saveToStorage() {
+                try {
+                    localStorage.setItem('rolki_rollTrackerData', JSON.stringify(this.rolls));
+                } catch (e) {
+                    console.error('Błąd zapisu do localStorage:', e);
+                    alert('Nie udało się zapisać danych. Sprawdź ustawienia przeglądarki.');
+                }
+            }
+
+            loadFromStorage() {
+                try {
+                    const data = localStorage.getItem('rolki_rollTrackerData');
+                    return data ? JSON.parse(data) : [];
+                } catch (e) {
+                    console.error('Błąd odczytu z localStorage:', e);
+                    return [];
+                }
+            }
+        }
+
+        // =================================================================
+        // INITIALIZATION
+        // =================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadCurrentTab();
+            ObrazkiApp.loadHistory();
+            ObrazkiApp.loadLanguage();
+            ObrazkiApp.updateStats();
+            new RollTracker();
+        });
     </script>
 </body>
 </html>
