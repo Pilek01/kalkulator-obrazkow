@@ -652,7 +652,7 @@
         }
 
         .rolls-list {
-            max-height: 1200px;
+            max-height: 1600px;
             overflow-y: auto;
         }
 
@@ -1290,6 +1290,18 @@
                                             </div>
 
                                             <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="startingPalletNumberRolki" style="font-size: 0.9rem;">Numer palety do kontynuacji</label>
+                                                <input
+                                                    type="number"
+                                                    id="startingPalletNumberRolki"
+                                                    min="1"
+                                                    value="1"
+                                                    placeholder="np. 8"
+                                                    style="font-size: 1rem; padding: 0.7rem;">
+                                                <small class="help-text">Od której palety zaczynasz (np. #8)</small>
+                                            </div>
+
+                                            <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="inheritedRollsCountRolki" style="font-size: 0.9rem;">Rolek już na palecie</label>
                                                 <input
                                                     type="number"
@@ -1416,13 +1428,14 @@
             const rollsPerPallet = document.getElementById('rollsPerPalletRolki').value;
             const isContinuation = document.getElementById('continuationModeRolki').checked;
             const lastRollNumber = document.getElementById('lastRollNumberRolki').value;
+            const startingPalletNumber = document.getElementById('startingPalletNumberRolki') ? document.getElementById('startingPalletNumberRolki').value : '1';
             const inheritedCount = document.getElementById('inheritedRollsCountRolki').value;
             const inheritedWeight = document.getElementById('inheritedRollsWeightRolki').value;
 
             let summaryText = `Ilość: ${quantity} | ${rollsPerPallet} rolki/paletę`;
 
             if (isContinuation) {
-                summaryText += ` | Kont. od #${lastRollNumber}`;
+                summaryText += ` | Kont. od rolki #${lastRollNumber}, paleta #${startingPalletNumber}`;
                 if (parseInt(inheritedCount) > 0) {
                     summaryText += `, ${inheritedCount} rolki (${inheritedWeight}kg) na palecie`;
                 }
@@ -1975,6 +1988,7 @@
                 this.rollsPerPalletInput = document.getElementById('rollsPerPalletRolki');
                 this.continuationMode = document.getElementById('continuationModeRolki');
                 this.lastRollNumber = document.getElementById('lastRollNumberRolki');
+                this.startingPalletNumberInput = document.getElementById('startingPalletNumberRolki');
                 this.inheritedRollsCountInput = document.getElementById('inheritedRollsCountRolki');
                 this.inheritedRollsWeightInput = document.getElementById('inheritedRollsWeightRolki');
                 this.continuationFields = document.getElementById('continuationFields');
@@ -2003,6 +2017,11 @@
                 this.lastRollNumber.addEventListener('change', () => {
                     this.saveContinuationSettings();
                     updateConfigSummary();
+                });
+                this.startingPalletNumberInput.addEventListener('change', () => {
+                    this.saveContinuationSettings();
+                    updateConfigSummary();
+                    this.render();
                 });
                 this.inheritedRollsCountInput.addEventListener('change', () => {
                     this.saveContinuationSettings();
@@ -2042,6 +2061,7 @@
                 const settings = {
                     isContinuation: this.continuationMode.checked,
                     lastRollNumber: parseInt(this.lastRollNumber.value) || 0,
+                    startingPalletNumber: parseInt(this.startingPalletNumberInput.value) || 1,
                     inheritedRollsCount: parseInt(this.inheritedRollsCountInput.value) || 0,
                     inheritedRollsWeight: parseFloat(this.inheritedRollsWeightInput.value) || 0
                 };
@@ -2054,6 +2074,7 @@
                     if (settings) {
                         this.continuationMode.checked = settings.isContinuation;
                         this.lastRollNumber.value = settings.lastRollNumber || 0;
+                        this.startingPalletNumberInput.value = settings.startingPalletNumber || 1;
                         this.inheritedRollsCountInput.value = settings.inheritedRollsCount || 0;
                         this.inheritedRollsWeightInput.value = settings.inheritedRollsWeight || 0;
                         if (settings.isContinuation) {
@@ -2230,29 +2251,47 @@
 
                 const defaultRollsPerPallet = parseInt(this.rollsPerPalletInput.value) || 3;
                 const isContinuation = this.continuationMode.checked;
+                const startingPalletNumber = parseInt(this.startingPalletNumberInput.value) || 1;
                 const inheritedCount = parseInt(this.inheritedRollsCountInput.value) || 0;
                 const inheritedWeight = parseFloat(this.inheritedRollsWeightInput.value) || 0;
 
                 const pallets = [];
-                let currentPalletIndex = 0;
+                // Zaczynamy od numeru palety minus 1 (bo indeksy zaczynają się od 0)
+                let currentPalletIndex = isContinuation ? (startingPalletNumber - 1) : 0;
                 let rollIndex = 0;
 
-                // Pierwsza paleta - uwzględnij odziedziczone rolki
-                if (currentPalletIndex === 0 && isContinuation && inheritedCount > 0) {
-                    const firstPalletSize = this.palletCustomSizes[0] || defaultRollsPerPallet;
-                    const availableSpace = Math.max(0, firstPalletSize - inheritedCount);
-                    const firstPalletRolls = sortedRolls.slice(0, availableSpace);
+                // Pierwsza paleta w trybie kontynuacji
+                if (rollIndex === 0 && isContinuation) {
+                    const firstPalletSize = this.palletCustomSizes[currentPalletIndex] || defaultRollsPerPallet;
 
-                    pallets.push({
-                        index: 0,
-                        rolls: firstPalletRolls,
-                        size: firstPalletSize,
-                        inheritedCount: inheritedCount,
-                        inheritedWeight: inheritedWeight
-                    });
+                    if (inheritedCount > 0) {
+                        // Paleta z odziedziczonymi rolkami - ograniczona przestrzeń
+                        const availableSpace = Math.max(0, firstPalletSize - inheritedCount);
+                        const firstPalletRolls = sortedRolls.slice(0, availableSpace);
 
-                    rollIndex = availableSpace;
-                    currentPalletIndex++;
+                        pallets.push({
+                            index: currentPalletIndex,
+                            rolls: firstPalletRolls,
+                            size: firstPalletSize,
+                            inheritedCount: inheritedCount,
+                            inheritedWeight: inheritedWeight
+                        });
+
+                        rollIndex = availableSpace;
+                        currentPalletIndex++;
+                    } else {
+                        // Paleta pusta - pełna przestrzeń dostępna
+                        const firstPalletRolls = sortedRolls.slice(0, firstPalletSize);
+
+                        pallets.push({
+                            index: currentPalletIndex,
+                            rolls: firstPalletRolls,
+                            size: firstPalletSize
+                        });
+
+                        rollIndex = firstPalletSize;
+                        currentPalletIndex++;
+                    }
                 }
 
                 // Pozostałe palety
