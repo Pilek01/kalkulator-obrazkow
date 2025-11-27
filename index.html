@@ -849,11 +849,40 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+            max-height: 5000px;
+            opacity: 1;
+        }
+
+        .pallet-rolls.collapsed {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            gap: 0;
         }
 
         .pallet-container .roll-item {
             margin-bottom: 0;
             border-left-width: 3px;
+        }
+
+        .pallet-toggle-arrow {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            cursor: pointer;
+            color: var(--accent);
+            user-select: none;
+        }
+
+        .pallet-toggle-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .pallet-header {
+            cursor: pointer;
+            user-select: none;
         }
 
         .modal {
@@ -1375,7 +1404,7 @@
     </div>
 
     <footer>
-        Made by Kamil Matysek
+        Made by Kamil Matysek | v1.0.2
     </footer>
 
     <!-- Modal edycji palety -->
@@ -1442,6 +1471,20 @@
             }
 
             document.getElementById('configSummary').textContent = summaryText;
+        }
+
+        function togglePallet(headerElement) {
+            const palletContainer = headerElement.parentElement;
+            const palletRolls = palletContainer.querySelector('.pallet-rolls');
+            const arrow = headerElement.querySelector('.pallet-toggle-arrow');
+
+            if (palletRolls.classList.contains('collapsed')) {
+                palletRolls.classList.remove('collapsed');
+                arrow.classList.remove('collapsed');
+            } else {
+                palletRolls.classList.add('collapsed');
+                arrow.classList.add('collapsed');
+            }
         }
 
         // =================================================================
@@ -1762,6 +1805,30 @@
                 localStorage.setItem('obrazki_history', JSON.stringify(this.history));
             },
 
+            saveConfig() {
+                const config = {
+                    walek: document.getElementById('walekObrazki').value,
+                    motywy: document.getElementById('motywyObrazki').value,
+                    rolki: document.getElementById('rolkiObrazki').value,
+                    zaokraglaj: document.getElementById('zaokraglajObrazki').checked
+                };
+                localStorage.setItem('obrazki_config', JSON.stringify(config));
+            },
+
+            loadConfig() {
+                try {
+                    const config = JSON.parse(localStorage.getItem('obrazki_config'));
+                    if (config) {
+                        if (config.walek) document.getElementById('walekObrazki').value = config.walek;
+                        if (config.motywy) document.getElementById('motywyObrazki').value = config.motywy;
+                        if (config.rolki) document.getElementById('rolkiObrazki').value = config.rolki;
+                        if (config.zaokraglaj !== undefined) document.getElementById('zaokraglajObrazki').checked = config.zaokraglaj;
+                    }
+                } catch (e) {
+                    console.error('Błąd wczytywania konfiguracji:', e);
+                }
+            },
+
             calculate(event) {
                 event.preventDefault();
 
@@ -1770,6 +1837,9 @@
                 const motywy = parseInt(document.getElementById('motywyObrazki').value);
                 const zaokraglaj = document.getElementById('zaokraglajObrazki').checked;
                 const rolki = parseInt(document.getElementById('rolkiObrazki').value) || 1;
+
+                // Zapisz konfigurację po obliczeniu
+                this.saveConfig();
 
                 if (walek <= 0) {
                     alert(this.translations[this.currentLang].error_invalid_sleeve);
@@ -2007,6 +2077,7 @@
 
                 this.loadContinuationSettings();
                 this.loadPalletSettings();
+                this.loadQuantitySettings();
                 this.loadConfigCollapsedState();
             }
 
@@ -2031,7 +2102,10 @@
                     this.saveContinuationSettings();
                     updateConfigSummary();
                 });
-                this.quantityInput.addEventListener('change', () => updateConfigSummary());
+                this.quantityInput.addEventListener('change', () => {
+                    this.saveQuantitySettings();
+                    updateConfigSummary();
+                });
                 this.rollsPerPalletInput.addEventListener('change', () => {
                     this.savePalletSettings();
                     updateConfigSummary();
@@ -2115,6 +2189,22 @@
                     }
                 } catch (e) {
                     console.error('Błąd wczytywania ustawień palet:', e);
+                }
+            }
+
+            saveQuantitySettings() {
+                const quantity = parseInt(this.quantityInput.value) || 1;
+                localStorage.setItem('rolki_quantitySettings', quantity.toString());
+            }
+
+            loadQuantitySettings() {
+                try {
+                    const quantity = localStorage.getItem('rolki_quantitySettings');
+                    if (quantity) {
+                        this.quantityInput.value = parseInt(quantity);
+                    }
+                } catch (e) {
+                    console.error('Błąd wczytywania ustawień ilości:', e);
                 }
             }
 
@@ -2398,11 +2488,12 @@
 
                 return `
                     <div class="pallet-container">
-                        <div class="pallet-header">
+                        <div class="pallet-header" onclick="togglePallet(this)">
                             <div>
                                 <div class="pallet-title">
                                     <span class="pallet-icon">📦</span>
                                     <span>Paleta #${pallet.index + 1}</span>
+                                    <span class="pallet-toggle-arrow collapsed">▼</span>
                                 </div>
                                 <div class="pallet-summary">
                                     <div class="pallet-stat">
@@ -2418,7 +2509,7 @@
                                     ` : ''}
                                 </div>
                             </div>
-                            <div class="pallet-actions">
+                            <div class="pallet-actions" onclick="event.stopPropagation()">
                                 <button
                                     class="btn-edit-pallet"
                                     data-pallet-index="${pallet.index}"
@@ -2427,7 +2518,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="pallet-rolls">
+                        <div class="pallet-rolls collapsed">
                             ${inheritedSection}
                             ${rollsHtml}
                         </div>
@@ -2507,8 +2598,15 @@
             loadCurrentTab();
             ObrazkiApp.loadHistory();
             ObrazkiApp.loadLanguage();
+            ObrazkiApp.loadConfig();
             ObrazkiApp.updateStats();
             new RollTracker();
+
+            // Event listenery dla automatycznego zapisywania konfiguracji
+            document.getElementById('walekObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
+            document.getElementById('motywyObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
+            document.getElementById('rolkiObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
+            document.getElementById('zaokraglajObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
         });
     </script>
 </body>
