@@ -490,6 +490,133 @@
             border: 2px solid var(--border);
         }
 
+        /* Config Panel Styles */
+        .config-panel {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .config-header:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .config-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .config-icon {
+            font-size: 1.2rem;
+        }
+
+        .config-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .config-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .config-summary {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            text-align: right;
+        }
+
+        .toggle-arrow {
+            font-size: 1rem;
+            transition: transform 0.3s;
+            color: var(--accent);
+        }
+
+        .toggle-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .config-body {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        .config-body.collapsed {
+            max-height: 0;
+            padding: 0 1rem;
+            overflow: hidden;
+            border-top: none;
+            opacity: 0;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .config-continuation {
+            margin-top: 1rem;
+        }
+
+        .continuation-fields {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        .continuation-fields.visible {
+            display: block;
+        }
+
+        .continuation-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .inherited-rolls {
+            background: rgba(158, 158, 158, 0.15);
+            border: 2px dashed #9e9e9e;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .inherited-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .inherited-info {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -525,7 +652,7 @@
         }
 
         .rolls-list {
-            max-height: 400px;
+            max-height: 1200px;
             overflow-y: auto;
         }
 
@@ -1101,52 +1228,95 @@
                             </div>
                         </div>
 
-                        <!-- Konfiguracja w jednej linii -->
-                        <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;">
-                                ⚙️ KONFIGURACJA
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label for="quantityRolki" style="font-size: 0.95rem;">🔢 Ilość rolek</label>
-                                    <input
-                                        type="number"
-                                        id="quantityRolki"
-                                        value="1"
-                                        min="1"
-                                        required
-                                        style="font-size: 1.1rem; padding: 0.8rem;">
+                        <!-- Panel konfiguracji -->
+                        <div class="config-panel">
+                            <div class="config-header" onclick="toggleConfigPanel()">
+                                <div class="config-header-left">
+                                    <span class="config-icon">⚙️</span>
+                                    <span class="config-title">KONFIGURACJA</span>
                                 </div>
-
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label for="rollsPerPalletRolki" style="font-size: 0.95rem;">📦 Rolek na paletę</label>
-                                    <input
-                                        type="number"
-                                        id="rollsPerPalletRolki"
-                                        value="3"
-                                        min="1"
-                                        required
-                                        style="font-size: 1.1rem; padding: 0.8rem;">
+                                <div class="config-header-right">
+                                    <span class="config-summary" id="configSummary"></span>
+                                    <span class="toggle-arrow" id="configArrow">▼</span>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-group continuation-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="continuationModeRolki">
-                                <span>Kontynuacja zlecenia po poprzedniej zmianie</span>
-                            </label>
-                        </div>
+                            <div class="config-body" id="configBody">
+                                <!-- Rząd 1: Ilość rolek + Rolek na paletę -->
+                                <div class="config-row">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="quantityRolki" style="font-size: 0.95rem;">🔢 Ilość rolek</label>
+                                        <input
+                                            type="number"
+                                            id="quantityRolki"
+                                            value="1"
+                                            min="1"
+                                            required
+                                            style="font-size: 1.1rem; padding: 0.8rem;">
+                                    </div>
 
-                        <div class="form-group" id="lastRollGroupRolki" style="display: none;">
-                            <label for="lastRollNumberRolki">Ostatnia rolka z poprzedniej zmiany</label>
-                            <input
-                                type="number"
-                                id="lastRollNumberRolki"
-                                min="0"
-                                value="0"
-                                placeholder="np. 20">
-                            <small class="help-text">Twoje rolki zaczną się od tego numeru + 1</small>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="rollsPerPalletRolki" style="font-size: 0.95rem;">📦 Rolek na paletę</label>
+                                        <input
+                                            type="number"
+                                            id="rollsPerPalletRolki"
+                                            value="3"
+                                            min="1"
+                                            required
+                                            style="font-size: 1.1rem; padding: 0.8rem;">
+                                    </div>
+                                </div>
+
+                                <!-- Rząd 2: Kontynuacja -->
+                                <div class="config-continuation">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="continuationModeRolki">
+                                        <span>Kontynuacja zlecenia po poprzedniej zmianie</span>
+                                    </label>
+
+                                    <!-- Pola kontynuacji (widoczne gdy checkbox zaznaczony) -->
+                                    <div class="continuation-fields" id="continuationFields">
+                                        <div class="continuation-row">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="lastRollNumberRolki" style="font-size: 0.9rem;">Ostatnia rolka ze zlecenia</label>
+                                                <input
+                                                    type="number"
+                                                    id="lastRollNumberRolki"
+                                                    min="0"
+                                                    value="0"
+                                                    placeholder="np. 20"
+                                                    style="font-size: 1rem; padding: 0.7rem;">
+                                                <small class="help-text">Twoje rolki zaczną się od tego numeru + 1</small>
+                                            </div>
+
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="inheritedRollsCountRolki" style="font-size: 0.9rem;">Rolek już na palecie</label>
+                                                <input
+                                                    type="number"
+                                                    id="inheritedRollsCountRolki"
+                                                    min="0"
+                                                    value="0"
+                                                    placeholder="np. 2"
+                                                    style="font-size: 1rem; padding: 0.7rem;">
+                                                <small class="help-text">Ile rolek jest już na palecie</small>
+                                            </div>
+
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="inheritedRollsWeightRolki" style="font-size: 0.9rem;">Ich łączna waga (kg)</label>
+                                                <input
+                                                    type="number"
+                                                    id="inheritedRollsWeightRolki"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value="0"
+                                                    placeholder="np. 45.5"
+                                                    style="font-size: 1rem; padding: 0.7rem;">
+                                                <small class="help-text">Suma wagi rolek z poprzedniej zmiany</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Dodaj</button>
@@ -1222,6 +1392,45 @@
     </div>
 
     <script>
+        // =================================================================
+        // CONFIG PANEL TOGGLE (FOR ROLKI TAB)
+        // =================================================================
+        function toggleConfigPanel() {
+            const configBody = document.getElementById('configBody');
+            const configArrow = document.getElementById('configArrow');
+            const isCollapsed = configBody.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                configBody.classList.remove('collapsed');
+                configArrow.classList.remove('rotated');
+                localStorage.setItem('rolki_configCollapsed', 'false');
+            } else {
+                configBody.classList.add('collapsed');
+                configArrow.classList.add('rotated');
+                localStorage.setItem('rolki_configCollapsed', 'true');
+            }
+        }
+
+        function updateConfigSummary() {
+            const quantity = document.getElementById('quantityRolki').value;
+            const rollsPerPallet = document.getElementById('rollsPerPalletRolki').value;
+            const isContinuation = document.getElementById('continuationModeRolki').checked;
+            const lastRollNumber = document.getElementById('lastRollNumberRolki').value;
+            const inheritedCount = document.getElementById('inheritedRollsCountRolki').value;
+            const inheritedWeight = document.getElementById('inheritedRollsWeightRolki').value;
+
+            let summaryText = `Ilość: ${quantity} | ${rollsPerPallet} rolki/paletę`;
+
+            if (isContinuation) {
+                summaryText += ` | Kont. od #${lastRollNumber}`;
+                if (parseInt(inheritedCount) > 0) {
+                    summaryText += `, ${inheritedCount} rolki (${inheritedWeight}kg) na palecie`;
+                }
+            }
+
+            document.getElementById('configSummary').textContent = summaryText;
+        }
+
         // =================================================================
         // TAB SWITCHING
         // =================================================================
@@ -1766,7 +1975,9 @@
                 this.rollsPerPalletInput = document.getElementById('rollsPerPalletRolki');
                 this.continuationMode = document.getElementById('continuationModeRolki');
                 this.lastRollNumber = document.getElementById('lastRollNumberRolki');
-                this.lastRollGroup = document.getElementById('lastRollGroupRolki');
+                this.inheritedRollsCountInput = document.getElementById('inheritedRollsCountRolki');
+                this.inheritedRollsWeightInput = document.getElementById('inheritedRollsWeightRolki');
+                this.continuationFields = document.getElementById('continuationFields');
                 this.rollsList = document.getElementById('rollsListRolki');
                 this.totalPallets = document.getElementById('totalPalletsRolki');
                 this.totalRolls = document.getElementById('totalRollsRolki');
@@ -1782,14 +1993,30 @@
 
                 this.loadContinuationSettings();
                 this.loadPalletSettings();
+                this.loadConfigCollapsedState();
             }
 
             attachEventListeners() {
                 this.form.addEventListener('submit', (e) => this.handleSubmit(e));
                 this.clearAllBtn.addEventListener('click', () => this.clearAll());
                 this.continuationMode.addEventListener('change', (e) => this.handleContinuationToggle(e));
-                this.lastRollNumber.addEventListener('change', () => this.saveContinuationSettings());
-                this.rollsPerPalletInput.addEventListener('change', () => this.savePalletSettings());
+                this.lastRollNumber.addEventListener('change', () => {
+                    this.saveContinuationSettings();
+                    updateConfigSummary();
+                });
+                this.inheritedRollsCountInput.addEventListener('change', () => {
+                    this.saveContinuationSettings();
+                    updateConfigSummary();
+                });
+                this.inheritedRollsWeightInput.addEventListener('change', () => {
+                    this.saveContinuationSettings();
+                    updateConfigSummary();
+                });
+                this.quantityInput.addEventListener('change', () => updateConfigSummary());
+                this.rollsPerPalletInput.addEventListener('change', () => {
+                    this.savePalletSettings();
+                    updateConfigSummary();
+                });
 
                 this.cancelEditBtn.addEventListener('click', () => this.closeEditModal());
                 this.saveEditBtn.addEventListener('click', () => this.saveEditPallet());
@@ -1802,18 +2029,21 @@
 
             handleContinuationToggle(e) {
                 if (e.target.checked) {
-                    this.lastRollGroup.style.display = 'block';
+                    this.continuationFields.classList.add('visible');
                 } else {
-                    this.lastRollGroup.style.display = 'none';
+                    this.continuationFields.classList.remove('visible');
                 }
                 this.saveContinuationSettings();
+                updateConfigSummary();
                 this.render();
             }
 
             saveContinuationSettings() {
                 const settings = {
                     isContinuation: this.continuationMode.checked,
-                    lastRollNumber: parseInt(this.lastRollNumber.value) || 0
+                    lastRollNumber: parseInt(this.lastRollNumber.value) || 0,
+                    inheritedRollsCount: parseInt(this.inheritedRollsCountInput.value) || 0,
+                    inheritedRollsWeight: parseFloat(this.inheritedRollsWeightInput.value) || 0
                 };
                 localStorage.setItem('rolki_continuationSettings', JSON.stringify(settings));
             }
@@ -1823,13 +2053,28 @@
                     const settings = JSON.parse(localStorage.getItem('rolki_continuationSettings'));
                     if (settings) {
                         this.continuationMode.checked = settings.isContinuation;
-                        this.lastRollNumber.value = settings.lastRollNumber;
+                        this.lastRollNumber.value = settings.lastRollNumber || 0;
+                        this.inheritedRollsCountInput.value = settings.inheritedRollsCount || 0;
+                        this.inheritedRollsWeightInput.value = settings.inheritedRollsWeight || 0;
                         if (settings.isContinuation) {
-                            this.lastRollGroup.style.display = 'block';
+                            this.continuationFields.classList.add('visible');
                         }
                     }
                 } catch (e) {
                     console.error('Błąd wczytywania ustawień kontynuacji:', e);
+                }
+            }
+
+            loadConfigCollapsedState() {
+                try {
+                    const isCollapsed = localStorage.getItem('rolki_configCollapsed') === 'true';
+                    if (isCollapsed) {
+                        document.getElementById('configBody').classList.add('collapsed');
+                        document.getElementById('configArrow').classList.add('rotated');
+                    }
+                    updateConfigSummary();
+                } catch (e) {
+                    console.error('Błąd wczytywania stanu panelu konfiguracji:', e);
                 }
             }
 
@@ -1887,6 +2132,8 @@
                     return;
                 }
 
+                const wasEmpty = this.rolls.length === 0;
+
                 for (let i = 0; i < quantity; i++) {
                     this.addRoll(weight, images);
                 }
@@ -1897,6 +2144,17 @@
 
                 this.saveToStorage();
                 this.render();
+
+                // Auto-zwiń panel po dodaniu pierwszej rolki
+                if (wasEmpty && this.rolls.length > 0) {
+                    const configBody = document.getElementById('configBody');
+                    const configArrow = document.getElementById('configArrow');
+                    if (!configBody.classList.contains('collapsed')) {
+                        configBody.classList.add('collapsed');
+                        configArrow.classList.add('rotated');
+                        localStorage.setItem('rolki_configCollapsed', 'true');
+                    }
+                }
             }
 
             addRoll(weight, images) {
@@ -1971,10 +2229,33 @@
                 );
 
                 const defaultRollsPerPallet = parseInt(this.rollsPerPalletInput.value) || 3;
+                const isContinuation = this.continuationMode.checked;
+                const inheritedCount = parseInt(this.inheritedRollsCountInput.value) || 0;
+                const inheritedWeight = parseFloat(this.inheritedRollsWeightInput.value) || 0;
+
                 const pallets = [];
                 let currentPalletIndex = 0;
                 let rollIndex = 0;
 
+                // Pierwsza paleta - uwzględnij odziedziczone rolki
+                if (currentPalletIndex === 0 && isContinuation && inheritedCount > 0) {
+                    const firstPalletSize = this.palletCustomSizes[0] || defaultRollsPerPallet;
+                    const availableSpace = Math.max(0, firstPalletSize - inheritedCount);
+                    const firstPalletRolls = sortedRolls.slice(0, availableSpace);
+
+                    pallets.push({
+                        index: 0,
+                        rolls: firstPalletRolls,
+                        size: firstPalletSize,
+                        inheritedCount: inheritedCount,
+                        inheritedWeight: inheritedWeight
+                    });
+
+                    rollIndex = availableSpace;
+                    currentPalletIndex++;
+                }
+
+                // Pozostałe palety
                 while (rollIndex < sortedRolls.length) {
                     const palletSize = this.palletCustomSizes[currentPalletIndex] || defaultRollsPerPallet;
                     const palletRolls = sortedRolls.slice(rollIndex, rollIndex + palletSize);
@@ -2057,9 +2338,24 @@
                 const palletWeight = pallet.rolls.reduce((sum, roll) => sum + roll.weight, 0);
                 const palletImages = pallet.rolls.reduce((sum, roll) => sum + roll.images, 0);
 
+                // Uwzględnij odziedziczone rolki w wadze i ilości
+                const totalPalletWeight = palletWeight + (pallet.inheritedWeight || 0);
+                const totalRollCount = pallet.rolls.length + (pallet.inheritedCount || 0);
+
                 // Odwróć kolejność rolek w palecie - najnowsze na górze
                 const reversedRolls = [...pallet.rolls].reverse();
                 const rollsHtml = reversedRolls.map(roll => this.createRollElement(roll)).join('');
+
+                // Sekcja odziedziczonych rolek (tylko dla pierwszej palety)
+                let inheritedSection = '';
+                if (pallet.inheritedCount && pallet.inheritedCount > 0) {
+                    inheritedSection = `
+                        <div class="inherited-rolls">
+                            <div class="inherited-label">📥 Z poprzedniej zmiany:</div>
+                            <div class="inherited-info">${pallet.inheritedCount} rolek • ${pallet.inheritedWeight.toFixed(2)} kg</div>
+                        </div>
+                    `;
+                }
 
                 return `
                     <div class="pallet-container">
@@ -2071,10 +2367,10 @@
                                 </div>
                                 <div class="pallet-summary">
                                     <div class="pallet-stat">
-                                        <span>Rolek: <strong>${pallet.rolls.length}</strong></span>
+                                        <span>Rolek: <strong>${totalRollCount}</strong></span>
                                     </div>
                                     <div class="pallet-stat">
-                                        <span>Waga: <strong>${palletWeight.toFixed(2)} kg</strong></span>
+                                        <span>Waga: <strong>${totalPalletWeight.toFixed(2)} kg</strong></span>
                                     </div>
                                     ${palletImages > 0 ? `
                                         <div class="pallet-stat">
@@ -2093,6 +2389,7 @@
                             </div>
                         </div>
                         <div class="pallet-rolls">
+                            ${inheritedSection}
                             ${rollsHtml}
                         </div>
                     </div>
