@@ -644,6 +644,111 @@
             color: var(--accent);
         }
 
+        /* Order Progress Bar */
+        .order-progress-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--border);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .progress-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progress-icon {
+            font-size: 1.3rem;
+        }
+
+        .progress-stats {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-stats strong,
+        .progress-stats span:first-child {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .progress-percentage {
+            margin-left: 0.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-bar-container {
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #66bb6a);
+            border-radius: 10px;
+            transition: width 0.5s ease, background 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar.warning-70 {
+            background: linear-gradient(90deg, #ffc107, #ffca28);
+        }
+
+        .progress-bar.warning-80 {
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+        }
+
+        .progress-bar.warning-90 {
+            background: linear-gradient(90deg, #f44336, #ef5350);
+        }
+
+        .progress-bar.complete {
+            background: linear-gradient(90deg, #9c27b0, #ba68c8);
+        }
+
+        .progress-remaining {
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        .progress-remaining strong {
+            color: var(--accent);
+        }
+
+        /* Sugestia wagi - subtelne wyróżnienie */
+        .form-group input.has-suggestion::placeholder {
+            color: #4ecdc4;
+            opacity: 0.85;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .form-group input.has-suggestion {
+            border-color: rgba(78, 205, 196, 0.5);
+        }
+
         .rolls-header {
             display: flex;
             justify-content: space-between;
@@ -1091,51 +1196,61 @@
                     <div class="calculator-header" data-translate-key="card_header">Oblicz liczbę obrazków</div>
 
                     <form id="calculatorFormObrazki" onsubmit="ObrazkiApp.calculate(event)">
-                        <!-- KONFIGURACJA W JEDNEJ LINII -->
-                        <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border);">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.8rem; font-weight: 600;" data-translate-key="config_header">
-                                ⚙️ KONFIGURACJA (ustaw raz na zmianę)
+                        <!-- Panel konfiguracji - Obrazki -->
+                        <div class="config-panel" id="configPanelObrazki">
+                            <div class="config-header" onclick="toggleConfigPanelObrazki()">
+                                <div class="config-header-left">
+                                    <span class="config-icon">⚙️</span>
+                                    <span class="config-title" data-translate-key="config_header_short">KONFIGURACJA</span>
+                                </div>
+                                <div class="config-header-right">
+                                    <span class="config-summary" id="configSummaryObrazki"></span>
+                                    <span class="toggle-arrow" id="configArrowObrazki">▼</span>
+                                </div>
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label for="walekObrazki" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
-                                    <input
-                                        type="number"
-                                        id="walekObrazki"
-                                        name="walek"
-                                        step="0.1"
-                                        required
-                                        data-translate-placeholder-key="sleeve_placeholder"
-                                        placeholder="59.0"
-                                        style="font-size: 1rem; padding: 0.7rem;">
-                                </div>
 
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label for="motywyObrazki" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
-                                    <input
-                                        type="number"
-                                        id="motywyObrazki"
-                                        name="motywy"
-                                        step="1"
-                                        required
-                                        data-translate-placeholder-key="motifs_placeholder"
-                                        placeholder="2"
-                                        min="1"
-                                        style="font-size: 1rem; padding: 0.7rem;">
-                                </div>
+                            <div class="config-body" id="configBodyObrazki">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="walekObrazki" style="font-size: 0.9rem;" data-translate-key="sleeve_label">🔧 Wałek (cm)</label>
+                                        <input
+                                            type="number"
+                                            id="walekObrazki"
+                                            name="walek"
+                                            step="0.1"
+                                            required
+                                            data-translate-placeholder-key="sleeve_placeholder"
+                                            placeholder="59.0"
+                                            style="font-size: 1rem; padding: 0.7rem;">
+                                    </div>
 
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label for="rolkiObrazki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
-                                    <input
-                                        type="number"
-                                        id="rolkiObrazki"
-                                        name="rolki"
-                                        step="1"
-                                        min="1"
-                                        value="1"
-                                        data-translate-placeholder-key="rolls_placeholder"
-                                        placeholder="1"
-                                        style="font-size: 1rem; padding: 0.7rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="motywyObrazki" style="font-size: 0.9rem;" data-translate-key="motifs_label">🎨 Motywy</label>
+                                        <input
+                                            type="number"
+                                            id="motywyObrazki"
+                                            name="motywy"
+                                            step="1"
+                                            required
+                                            data-translate-placeholder-key="motifs_placeholder"
+                                            placeholder="2"
+                                            min="1"
+                                            style="font-size: 1rem; padding: 0.7rem;">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="rolkiObrazki" style="font-size: 0.9rem;" data-translate-key="rolls_label">🔪 Rolek</label>
+                                        <input
+                                            type="number"
+                                            id="rolkiObrazki"
+                                            name="rolki"
+                                            step="1"
+                                            min="1"
+                                            value="1"
+                                            data-translate-placeholder-key="rolls_placeholder"
+                                            placeholder="1"
+                                            style="font-size: 1rem; padding: 0.7rem;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1228,6 +1343,27 @@
         <!-- ROLKI TAB CONTENT -->
         <div id="rolkiTab" class="tab-content">
             <div class="container rolki-container">
+                <!-- Progress Bar Zlecenia -->
+                <section class="order-progress-section" id="orderProgressSection" style="display: none;">
+                    <div class="progress-header">
+                        <div class="progress-title">
+                            <span class="progress-icon">📊</span>
+                            <span>Postęp zlecenia</span>
+                        </div>
+                        <div class="progress-stats">
+                            <span id="progressCurrent">0</span> / <span id="progressTotal">0</span>
+                            <span id="progressUnit">obrazków</span>
+                            <span class="progress-percentage" id="progressPercentage">(0%)</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                    </div>
+                    <div class="progress-remaining" id="progressRemaining">
+                        Pozostało: <strong>0</strong> <span id="progressRemainingUnit">obrazków</span>
+                    </div>
+                </section>
+
                 <!-- Formularz dodawania rolek -->
                 <section class="add-section">
                     <h2>Dodaj rolki</h2>
@@ -1357,6 +1493,45 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Rząd 3: Długość zlecenia -->
+                                <div class="config-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="orderLengthRolki" style="font-size: 0.95rem;">📋 Długość zlecenia</label>
+                                        <input
+                                            type="number"
+                                            id="orderLengthRolki"
+                                            min="0"
+                                            step="1"
+                                            placeholder="np. 2000000"
+                                            style="font-size: 1.1rem; padding: 0.8rem;">
+                                        <small class="help-text">Zostaw puste jeśli nie chcesz śledzić postępu</small>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="orderUnitRolki" style="font-size: 0.95rem;">📏 Jednostka</label>
+                                        <select id="orderUnitRolki" style="font-size: 1.1rem; padding: 0.8rem;">
+                                            <option value="images">Obrazki</option>
+                                            <option value="kg">Kilogramy (kg)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Pola kontynuacji zlecenia (widoczne tylko przy włączonej kontynuacji I długości zlecenia) -->
+                                <div class="continuation-order-fields" id="continuationOrderFields" style="display: none; margin-top: 1rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="orderCompletedRolki" style="font-size: 0.95rem;">✅ Już wykonano</label>
+                                        <input
+                                            type="number"
+                                            id="orderCompletedRolki"
+                                            min="0"
+                                            step="1"
+                                            value="0"
+                                            placeholder="np. 950000"
+                                            style="font-size: 1.1rem; padding: 0.8rem;">
+                                        <small class="help-text">Ile zostało zrobione przed Twoją zmianą</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1404,7 +1579,7 @@
     </div>
 
     <footer>
-        Made by Kamil Matysek | v1.0.2
+        Made by Kamil Matysek | v1.0.4
     </footer>
 
     <!-- Modal edycji palety -->
@@ -1460,17 +1635,34 @@
             const startingPalletNumber = document.getElementById('startingPalletNumberRolki') ? document.getElementById('startingPalletNumberRolki').value : '1';
             const inheritedCount = document.getElementById('inheritedRollsCountRolki').value;
             const inheritedWeight = document.getElementById('inheritedRollsWeightRolki').value;
+            const orderLength = document.getElementById('orderLengthRolki') ? document.getElementById('orderLengthRolki').value : '';
+            const orderUnit = document.getElementById('orderUnitRolki') ? document.getElementById('orderUnitRolki').value : 'images';
 
             let summaryText = `Ilość: ${quantity} | ${rollsPerPallet} rolki/paletę`;
 
             if (isContinuation) {
-                summaryText += ` | Kont. od rolki #${lastRollNumber}, paleta #${startingPalletNumber}`;
+                summaryText += ` | Kont. od #${lastRollNumber}, paleta #${startingPalletNumber}`;
                 if (parseInt(inheritedCount) > 0) {
-                    summaryText += `, ${inheritedCount} rolki (${inheritedWeight}kg) na palecie`;
+                    summaryText += ` (${inheritedCount} na pal.)`;
                 }
             }
 
+            if (parseFloat(orderLength) > 0) {
+                const unitShort = orderUnit === 'images' ? 'obr.' : 'kg';
+                summaryText += ` | Zlec: ${formatOrderLength(orderLength)}${unitShort}`;
+            }
+
             document.getElementById('configSummary').textContent = summaryText;
+        }
+
+        function formatOrderLength(num) {
+            num = parseFloat(num);
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M ';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(0) + 'k ';
+            }
+            return num + ' ';
         }
 
         function togglePallet(headerElement) {
@@ -1485,6 +1677,31 @@
                 palletRolls.classList.add('collapsed');
                 arrow.classList.add('collapsed');
             }
+        }
+
+        function toggleConfigPanelObrazki() {
+            const configBody = document.getElementById('configBodyObrazki');
+            const configArrow = document.getElementById('configArrowObrazki');
+            const isCollapsed = configBody.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                configBody.classList.remove('collapsed');
+                configArrow.classList.remove('rotated');
+                localStorage.setItem('obrazki_configCollapsed', 'false');
+            } else {
+                configBody.classList.add('collapsed');
+                configArrow.classList.add('rotated');
+                localStorage.setItem('obrazki_configCollapsed', 'true');
+            }
+        }
+
+        function updateConfigSummaryObrazki() {
+            const walek = document.getElementById('walekObrazki').value || '-';
+            const motywy = document.getElementById('motywyObrazki').value || '-';
+            const rolki = document.getElementById('rolkiObrazki').value || '1';
+
+            document.getElementById('configSummaryObrazki').textContent =
+                `Wałek: ${walek}cm | Motywy: ${motywy} | Rolek: ${rolki}`;
         }
 
         // =================================================================
@@ -1570,6 +1787,7 @@
                     help_formula: "<strong>Wzór:</strong> ((Metry / Wałek) × 100) × Ilość motywów = Liczba obrazków",
                     card_header: "Oblicz liczbę obrazków",
                     config_header: "⚙️ KONFIGURACJA (ustaw raz na zmianę)",
+                    config_header_short: "KONFIGURACJA",
                     sleeve_label: "🔧 Wałek (cm)",
                     sleeve_placeholder: "59.0",
                     motifs_label: "🎨 Motywy",
@@ -1622,6 +1840,7 @@
                     help_formula: "<strong>Формула:</strong> ((Метри / Валек) × 100) × Кількість мотивів = Кількість зображень",
                     card_header: "Обчислити кількість зображень",
                     config_header: "⚙️ КОНФІГУРАЦІЯ (встановити раз на зміну)",
+                    config_header_short: "КОНФІГУРАЦІЯ",
                     sleeve_label: "🔧 Валек (см)",
                     sleeve_placeholder: "59.0",
                     motifs_label: "🎨 Мотиви",
@@ -1674,6 +1893,7 @@
                     help_formula: "<strong>Формула:</strong> ((Метры / Вал) × 100) × Количество мотивов = Количество изображений",
                     card_header: "Рассчитать количество изображений",
                     config_header: "⚙️ КОНФИГУРАЦИЯ (установить раз на смену)",
+                    config_header_short: "КОНФИГУРАЦИЯ",
                     sleeve_label: "🔧 Вал (см)",
                     sleeve_placeholder: "59.0",
                     motifs_label: "🎨 Мотивы",
@@ -2044,10 +2264,14 @@
             constructor() {
                 this.rolls = this.loadFromStorage();
                 this.palletCustomSizes = this.loadPalletSizes();
+                this.orderSettings = this.loadOrderSettings();
                 this.currentEditingPalletIndex = null;
                 this.initElements();
+                this.initOrderElements();
                 this.attachEventListeners();
+                this.attachOrderEventListeners();
                 this.render();
+                this.updateProgressBar();
             }
 
             initElements() {
@@ -2079,6 +2303,32 @@
                 this.loadPalletSettings();
                 this.loadQuantitySettings();
                 this.loadConfigCollapsedState();
+                this.updateWeightSuggestion();
+            }
+
+            initOrderElements() {
+                this.orderLengthInput = document.getElementById('orderLengthRolki');
+                this.orderUnitSelect = document.getElementById('orderUnitRolki');
+                this.orderCompletedInput = document.getElementById('orderCompletedRolki');
+                this.continuationOrderFields = document.getElementById('continuationOrderFields');
+                this.orderProgressSection = document.getElementById('orderProgressSection');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressCurrent = document.getElementById('progressCurrent');
+                this.progressTotal = document.getElementById('progressTotal');
+                this.progressUnit = document.getElementById('progressUnit');
+                this.progressPercentage = document.getElementById('progressPercentage');
+                this.progressRemaining = document.getElementById('progressRemaining');
+                this.progressRemainingUnit = document.getElementById('progressRemainingUnit');
+
+                if (this.orderSettings.length) {
+                    this.orderLengthInput.value = this.orderSettings.length;
+                }
+                if (this.orderSettings.unit) {
+                    this.orderUnitSelect.value = this.orderSettings.unit;
+                }
+                if (this.orderSettings.completed) {
+                    this.orderCompletedInput.value = this.orderSettings.completed;
+                }
             }
 
             attachEventListeners() {
@@ -2105,10 +2355,15 @@
                 this.quantityInput.addEventListener('change', () => {
                     this.saveQuantitySettings();
                     updateConfigSummary();
+                    this.updateWeightSuggestion();
                 });
                 this.rollsPerPalletInput.addEventListener('change', () => {
                     this.savePalletSettings();
                     updateConfigSummary();
+                });
+
+                this.imagesInput.addEventListener('input', () => {
+                    this.updateWeightSuggestion();
                 });
 
                 this.cancelEditBtn.addEventListener('click', () => this.closeEditModal());
@@ -2120,6 +2375,26 @@
                 });
             }
 
+            attachOrderEventListeners() {
+                this.orderLengthInput.addEventListener('change', () => {
+                    this.saveOrderSettings();
+                    this.updateContinuationOrderVisibility();
+                    this.updateProgressBar();
+                    updateConfigSummary();
+                });
+
+                this.orderUnitSelect.addEventListener('change', () => {
+                    this.saveOrderSettings();
+                    this.updateProgressBar();
+                    updateConfigSummary();
+                });
+
+                this.orderCompletedInput.addEventListener('change', () => {
+                    this.saveOrderSettings();
+                    this.updateProgressBar();
+                });
+            }
+
             handleContinuationToggle(e) {
                 if (e.target.checked) {
                     this.continuationFields.classList.add('visible');
@@ -2127,6 +2402,7 @@
                     this.continuationFields.classList.remove('visible');
                 }
                 this.saveContinuationSettings();
+                this.updateContinuationOrderVisibility();
                 updateConfigSummary();
                 this.render();
             }
@@ -2208,6 +2484,36 @@
                 }
             }
 
+            saveOrderSettings() {
+                const settings = {
+                    length: parseFloat(this.orderLengthInput.value) || 0,
+                    unit: this.orderUnitSelect.value,
+                    completed: parseFloat(this.orderCompletedInput.value) || 0
+                };
+                localStorage.setItem('rolki_orderSettings', JSON.stringify(settings));
+                this.orderSettings = settings;
+            }
+
+            loadOrderSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('rolki_orderSettings'));
+                    return settings || { length: 0, unit: 'images', completed: 0 };
+                } catch (e) {
+                    return { length: 0, unit: 'images', completed: 0 };
+                }
+            }
+
+            updateContinuationOrderVisibility() {
+                const hasOrderLength = parseFloat(this.orderLengthInput.value) > 0;
+                const isContinuation = this.continuationMode.checked;
+
+                if (hasOrderLength && isContinuation) {
+                    this.continuationOrderFields.style.display = 'block';
+                } else {
+                    this.continuationOrderFields.style.display = 'none';
+                }
+            }
+
             loadPalletSizes() {
                 try {
                     const sizes = localStorage.getItem('rolki_palletCustomSizes');
@@ -2251,6 +2557,8 @@
 
                 this.weightInput.value = '';
                 this.imagesInput.value = '';
+                this.weightInput.placeholder = 'np. 125.5';
+                this.weightInput.classList.remove('has-suggestion');
                 this.weightInput.focus();
 
                 this.saveToStorage();
@@ -2278,6 +2586,67 @@
                 this.rolls.push(roll);
             }
 
+            calculateSuggestedWeight(images) {
+                if (!images || images <= 0) {
+                    return null;
+                }
+
+                const rollsPerCut = parseInt(this.quantityInput.value) || 1;
+                const minRolls = 3 * rollsPerCut;
+
+                const validRolls = this.rolls.filter(roll =>
+                    roll.weight > 0 && roll.images > 0
+                );
+
+                if (validRolls.length < minRolls) {
+                    return null;
+                }
+
+                const ratios = validRolls.map(roll => roll.weight / roll.images);
+
+                const cleanedRatios = this.removeOutliers(ratios);
+
+                if (cleanedRatios.length < minRolls) {
+                    return null;
+                }
+
+                const avgRatio = cleanedRatios.reduce((sum, r) => sum + r, 0) / cleanedRatios.length;
+
+                const suggestedWeight = Math.round(images * avgRatio);
+
+                return suggestedWeight;
+            }
+
+            removeOutliers(values) {
+                if (values.length < 3) {
+                    return values;
+                }
+
+                const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+
+                const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+                const avgSquaredDiff = squaredDiffs.reduce((sum, v) => sum + v, 0) / values.length;
+                const stdDev = Math.sqrt(avgSquaredDiff);
+
+                const lowerBound = mean - (2 * stdDev);
+                const upperBound = mean + (2 * stdDev);
+
+                return values.filter(v => v >= lowerBound && v <= upperBound);
+            }
+
+            updateWeightSuggestion() {
+                const images = parseInt(this.imagesInput.value) || 0;
+                const suggestedWeight = this.calculateSuggestedWeight(images);
+
+                if (suggestedWeight !== null && suggestedWeight > 0) {
+                    this.weightInput.placeholder = `sugestia: ~${suggestedWeight} kg`;
+                    this.weightInput.classList.add('has-suggestion');
+                } else {
+                    this.weightInput.placeholder = 'np. 125.5';
+                    this.weightInput.classList.remove('has-suggestion');
+                }
+            }
+
             deleteRoll(id) {
                 if (confirm('Czy na pewno chcesz usunąć tę rolkę?')) {
                     this.rolls = this.rolls.filter(roll => roll.id !== id);
@@ -2290,9 +2659,13 @@
                 if (confirm('Czy na pewno chcesz usunąć wszystkie rolki? Tej operacji nie można cofnąć.')) {
                     this.rolls = [];
                     this.palletCustomSizes = {};
+                    this.orderLengthInput.value = '';
+                    this.orderCompletedInput.value = '0';
                     this.saveToStorage();
                     this.savePalletSizes();
+                    this.saveOrderSettings();
                     this.render();
+                    this.updateProgressBar();
                 }
             }
 
@@ -2461,6 +2834,64 @@
                         this.openEditPalletModal(palletIndex, currentSize);
                     });
                 });
+
+                this.updateProgressBar();
+                this.updateWeightSuggestion();
+            }
+
+            updateProgressBar() {
+                const orderLength = parseFloat(this.orderLengthInput.value) || 0;
+                const orderUnit = this.orderUnitSelect.value;
+                const orderCompleted = parseFloat(this.orderCompletedInput.value) || 0;
+
+                if (orderLength <= 0) {
+                    this.orderProgressSection.style.display = 'none';
+                    return;
+                }
+
+                this.orderProgressSection.style.display = 'block';
+
+                let currentProgress = orderCompleted;
+
+                if (orderUnit === 'images') {
+                    currentProgress += this.rolls.reduce((sum, roll) => sum + (roll.images || 0), 0);
+                } else {
+                    currentProgress += this.rolls.reduce((sum, roll) => sum + roll.weight, 0);
+                }
+
+                const percentage = Math.min((currentProgress / orderLength) * 100, 100);
+                const remaining = Math.max(orderLength - currentProgress, 0);
+
+                const unitText = orderUnit === 'images' ? 'obrazków' : 'kg';
+                this.progressCurrent.textContent = this.formatNumber(currentProgress);
+                this.progressTotal.textContent = this.formatNumber(orderLength);
+                this.progressUnit.textContent = unitText;
+                this.progressPercentage.textContent = `(${percentage.toFixed(1)}%)`;
+                this.progressRemaining.innerHTML = `Pozostało: <strong>${this.formatNumber(remaining)}</strong>`;
+                this.progressRemainingUnit.textContent = unitText;
+
+                this.progressBar.style.width = `${percentage}%`;
+
+                this.progressBar.classList.remove('warning-70', 'warning-80', 'warning-90', 'complete');
+
+                if (percentage >= 100) {
+                    this.progressBar.classList.add('complete');
+                } else if (percentage >= 90) {
+                    this.progressBar.classList.add('warning-90');
+                } else if (percentage >= 80) {
+                    this.progressBar.classList.add('warning-80');
+                } else if (percentage >= 70) {
+                    this.progressBar.classList.add('warning-70');
+                }
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(2) + 'M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'k';
+                }
+                return num.toFixed(num % 1 === 0 ? 0 : 2);
             }
 
             createPalletElement(pallet) {
@@ -2607,6 +3038,19 @@
             document.getElementById('motywyObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
             document.getElementById('rolkiObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
             document.getElementById('zaokraglajObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
+
+            // Wczytaj stan zwinięcia panelu konfiguracji Obrazki
+            const obrazkiCollapsed = localStorage.getItem('obrazki_configCollapsed') === 'true';
+            if (obrazkiCollapsed) {
+                document.getElementById('configBodyObrazki').classList.add('collapsed');
+                document.getElementById('configArrowObrazki').classList.add('rotated');
+            }
+            updateConfigSummaryObrazki();
+
+            // Nasłuchuj zmian w polach konfiguracji Obrazki
+            ['walekObrazki', 'motywyObrazki', 'rolkiObrazki'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateConfigSummaryObrazki);
+            });
         });
     </script>
 </body>
