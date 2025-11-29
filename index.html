@@ -24,15 +24,6 @@
             --danger: #f44336;
         }
 
-        body.light-mode {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #e0e0e0;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --border: #cccccc;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-primary);
@@ -62,10 +53,26 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Pierwszy rząd - logo i przełącznik zakładek */
+        .header-row-main {
+            display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
             gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Drugi rząd - język i pomoc */
+        .header-row-secondary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
         }
 
         .title {
@@ -108,12 +115,6 @@
             box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
         }
 
-        .controls-wrapper {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
         .language-selector {
             display: flex;
             gap: 0.5rem;
@@ -142,21 +143,30 @@
             opacity: 1;
         }
 
-        .theme-toggle {
+        /* Help Button */
+        .help-button {
             background: var(--bg-tertiary);
             border: 2px solid var(--border);
             color: var(--text-primary);
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
-        .theme-toggle:hover {
+        .help-button:hover {
             background: var(--accent);
             border-color: var(--accent);
-            transform: scale(1.05);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .help-button:active {
+            transform: translateY(0);
         }
 
         /* Tab Content */
@@ -440,7 +450,7 @@
         /* Rolki App Specific Styles */
         .rolki-container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 2rem auto;
         }
 
         section {
@@ -927,6 +937,16 @@
             box-shadow: 0 6px 12px rgba(255, 230, 109, 0.3);
         }
 
+        /* Tryb "pod torby" */
+        .pallet-container.bag-mode {
+            border-color: #9c27b0;
+            box-shadow: 0 6px 12px rgba(156, 39, 176, 0.3);
+        }
+
+        .pallet-container.bag-mode .pallet-title {
+            color: #9c27b0;
+        }
+
         .pallet-header {
             display: flex;
             justify-content: space-between;
@@ -1198,28 +1218,31 @@
     <div class="content-wrapper">
         <div class="header">
             <div class="header-content">
-                <div class="title">SENTREX - Kalkulatory Produkcji</div>
+                <!-- Pierwszy rząd: Logo i przełącznik zakładek -->
+                <div class="header-row-main">
+                    <div class="title">SENTREX - Kalkulatory Produkcji</div>
 
-                <!-- Tab Switcher -->
-                <div class="tab-switcher">
-                    <button class="tab-button active" onclick="switchTab('obrazki')">
-                        📊 Kalkulator Obrazków
-                    </button>
-                    <button class="tab-button" onclick="switchTab('rolki')">
-                        📦 Licznik Rolek
-                    </button>
+                    <!-- Tab Switcher -->
+                    <div class="tab-switcher">
+                        <button class="tab-button active" onclick="switchTab('obrazki')">
+                            📊 Kalkulator Obrazków
+                        </button>
+                        <button class="tab-button" onclick="switchTab('rolki')">
+                            📦 Licznik Rolek
+                        </button>
+                    </div>
                 </div>
 
-                <div class="controls-wrapper">
+                <!-- Drugi rząd: Język i pomoc -->
+                <div class="header-row-secondary">
                     <div class="language-selector" id="languageSelectorObrazki">
                         <span onclick="ObrazkiApp.setLanguage('pl')" class="lang-flag" data-lang="pl" title="Polski">🇵🇱</span>
                         <span onclick="ObrazkiApp.setLanguage('ua')" class="lang-flag" data-lang="ua" title="Українська">🇺🇦</span>
                         <span onclick="ObrazkiApp.setLanguage('ru')" class="lang-flag" data-lang="ru" title="Русский">🇷🇺</span>
                     </div>
-                    <button class="theme-toggle" onclick="toggleHelpObrazki()" data-translate-title-key="help_button_title" style="font-size: 1rem; padding: 0.5rem 1rem;" id="helpButtonObrazki">
+                    <button class="help-button" onclick="toggleHelpObrazki()" data-translate-title-key="help_button_title" id="helpButtonObrazki">
                         <span data-translate-key="help_button">❓ Jak to działa?</span>
                     </button>
-                    <button class="theme-toggle" onclick="toggleTheme()" data-translate-title-key="theme_toggle_title" title="Zmień motyw">🌓</button>
                 </div>
             </div>
         </div>
@@ -1472,9 +1495,10 @@
                                             type="number"
                                             id="rollsPerPalletRolki"
                                             value="3"
-                                            min="1"
+                                            min="0"
                                             required
                                             style="font-size: 1.1rem; padding: 0.8rem;">
+                                        <small class="help-text">Wpisz 0 dla trybu "pod torby" (bez palet)</small>
                                     </div>
                                 </div>
 
@@ -1625,7 +1649,7 @@
     </div>
 
     <footer>
-        Made by Kamil Matysek | v1.0.7
+        Made by Kamil Matysek | v1.1.0
     </footer>
 
     <!-- Modal edycji palety -->
@@ -1684,7 +1708,14 @@
             const orderLength = document.getElementById('orderLengthRolki') ? document.getElementById('orderLengthRolki').value : '';
             const orderUnit = document.getElementById('orderUnitRolki') ? document.getElementById('orderUnitRolki').value : 'images';
 
-            let summaryText = `Ilość: ${quantity} | ${rollsPerPallet} rolki/paletę`;
+            let summaryText = `Ilość: ${quantity}`;
+
+            // Tryb "pod torby" lub normalny tryb z paletami
+            if (parseInt(rollsPerPallet) === 0) {
+                summaryText += ` | Pod torby`;
+            } else {
+                summaryText += ` | ${rollsPerPallet} rolki/paletę`;
+            }
 
             if (isContinuation) {
                 summaryText += ` | Kont. od #${lastRollNumber}, paleta #${startingPalletNumber}`;
@@ -1801,21 +1832,6 @@
         }
 
         // =================================================================
-        // THEME TOGGLE (SHARED)
-        // =================================================================
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
-
-        function loadTheme() {
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-            }
-        }
-
-        // =================================================================
         // OBRAZKI APP
         // =================================================================
         const ObrazkiApp = {
@@ -1825,7 +1841,6 @@
                     app_title: "📊 Kalkulator Obrazków - SENTREX v1.0.5",
                     help_button: "❓ Jak to działa?",
                     help_button_title: "Pokaż pomoc",
-                    theme_toggle_title: "Zmień motyw",
                     help_box_title: "ℹ️ Jak to działa?",
                     help_meters: "<strong>Metry:</strong> Długość zadrukowanej rolki papieru (np. 6289m)",
                     help_sleeve: "<strong>Wałek (Sleeve):</strong> średnica sleeve'a w centymetrach (np. 59cm)",
@@ -1878,7 +1893,6 @@
                     app_title: "📊 Калькулятор Зображень - SENTREX v1.0.5",
                     help_button: "❓ Як це працює?",
                     help_button_title: "Показати допомогу",
-                    theme_toggle_title: "Змінити тему",
                     help_box_title: "ℹ️ Як це працює?",
                     help_meters: "<strong>Метри:</strong> Довжина друкованого рулону паперу (напр. 6289м)",
                     help_sleeve: "<strong>Валек (Sleeve):</strong> діаметр гільзи в сантиметрах (напр. 59см)",
@@ -1931,7 +1945,6 @@
                     app_title: "📊 Калькулятор Изображений - SENTREX v1.0.5",
                     help_button: "❓ Как это работает?",
                     help_button_title: "Показать помощь",
-                    theme_toggle_title: "Сменить тему",
                     help_box_title: "ℹ️ Как это работает?",
                     help_meters: "<strong>Метры:</strong> Длина печатного рулона бумаги (напр. 6289м)",
                     help_sleeve: "<strong>Вал (Sleeve):</strong> диаметр гильзы в сантиметрах (напр. 59см)",
@@ -2380,6 +2393,16 @@
                 }
             }
 
+            /**
+             * Pobiera wartość "Rolek na paletę" z obsługą wartości 0 (tryb "pod torby")
+             * @returns {number} Liczba rolek na paletę (0 = tryb pod torby)
+             */
+            getRollsPerPallet() {
+                const parsedValue = parseInt(this.rollsPerPalletInput.value);
+                // Użyj isNaN zamiast ||, aby 0 było traktowane jako poprawna wartość
+                return isNaN(parsedValue) ? 3 : parsedValue;
+            }
+
             attachEventListeners() {
                 this.form.addEventListener('submit', (e) => this.handleSubmit(e));
                 this.clearAllBtn.addEventListener('click', () => this.clearAll());
@@ -2514,7 +2537,7 @@
 
             savePalletSettings() {
                 const settings = {
-                    rollsPerPallet: parseInt(this.rollsPerPalletInput.value) || 3
+                    rollsPerPallet: this.getRollsPerPallet()
                 };
                 localStorage.setItem('rolki_palletSettings', JSON.stringify(settings));
                 this.render();
@@ -2781,8 +2804,16 @@
                 const totalWeight = this.rolls.reduce((sum, roll) => sum + roll.weight, 0);
                 const totalImages = this.rolls.reduce((sum, roll) => sum + roll.images, 0);
 
-                const pallets = this.groupIntoPallets();
-                const totalPallets = pallets.length;
+                const rollsPerPallet = this.getRollsPerPallet();
+
+                // Tryb "pod torby" - 0 palet
+                let totalPallets;
+                if (rollsPerPallet === 0) {
+                    totalPallets = 0;
+                } else {
+                    const pallets = this.groupIntoPallets();
+                    totalPallets = pallets.length;
+                }
 
                 return { totalRolls, totalWeight, totalImages, totalPallets };
             }
@@ -2794,7 +2825,17 @@
                     new Date(a.timestamp) - new Date(b.timestamp)
                 );
 
-                const defaultRollsPerPallet = parseInt(this.rollsPerPalletInput.value) || 3;
+                const defaultRollsPerPallet = this.getRollsPerPallet();
+
+                // TRYB "POD TORBY" - wszystkie rolki w jednym kontenerze
+                if (defaultRollsPerPallet === 0) {
+                    return [{
+                        index: 0,
+                        rolls: sortedRolls,
+                        size: sortedRolls.length,
+                        isBagMode: true  // Flaga trybu "pod torby"
+                    }];
+                }
                 const isContinuation = this.continuationMode.checked;
                 const startingPalletNumber = parseInt(this.startingPalletNumberInput.value) || 1;
                 const inheritedCount = parseInt(this.inheritedRollsCountInput.value) || 0;
@@ -2861,7 +2902,18 @@
 
             render() {
                 const { totalRolls, totalWeight, totalImages, totalPallets } = this.calculateSummary();
-                this.totalPallets.textContent = totalPallets;
+
+                const rollsPerPallet = this.getRollsPerPallet();
+
+                // Tryb "pod torby" - zmień wyświetlanie palet
+                if (rollsPerPallet === 0) {
+                    this.totalPallets.textContent = 'Pod torby';
+                    this.totalPallets.style.fontSize = '1.5rem'; // Mniejsza czcionka dla tekstu
+                } else {
+                    this.totalPallets.textContent = totalPallets;
+                    this.totalPallets.style.fontSize = '2.5rem'; // Normalna czcionka dla liczby
+                }
+
                 this.totalRolls.textContent = totalRolls;
                 this.totalWeight.textContent = totalWeight.toFixed(2);
                 this.totalImages.textContent = totalImages;
@@ -3100,17 +3152,17 @@
                 const palletWeight = pallet.rolls.reduce((sum, roll) => sum + roll.weight, 0);
                 const palletImages = pallet.rolls.reduce((sum, roll) => sum + roll.images, 0);
 
-                // Uwzględnij odziedziczone rolki w wadze i ilości
+                // Uwzględnij odziedziczone rolki w wadze i ilości (tylko dla normalnego trybu)
                 const totalPalletWeight = palletWeight + (pallet.inheritedWeight || 0);
                 const totalRollCount = pallet.rolls.length + (pallet.inheritedCount || 0);
 
-                // Odwróć kolejność rolek w palecie - najnowsze na górze
+                // Odwróć kolejność rolek - najnowsze na górze
                 const reversedRolls = [...pallet.rolls].reverse();
                 const rollsHtml = reversedRolls.map(roll => this.createRollElement(roll)).join('');
 
-                // Sekcja odziedziczonych rolek (tylko dla pierwszej palety)
+                // Sekcja odziedziczonych rolek (tylko dla normalnego trybu)
                 let inheritedSection = '';
-                if (pallet.inheritedCount && pallet.inheritedCount > 0) {
+                if (pallet.inheritedCount && pallet.inheritedCount > 0 && !pallet.isBagMode) {
                     inheritedSection = `
                         <div class="inherited-rolls">
                             <div class="inherited-label">📥 Z poprzedniej zmiany:</div>
@@ -3119,6 +3171,41 @@
                     `;
                 }
 
+                // TRYB "POD TORBY"
+                if (pallet.isBagMode) {
+                    return `
+                        <div class="pallet-container bag-mode">
+                            <div class="pallet-header" onclick="togglePallet(this)">
+                                <div>
+                                    <div class="pallet-title">
+                                        <span class="pallet-icon">🛍️</span>
+                                        <span>Pod torby</span>
+                                        <span class="pallet-toggle-arrow collapsed">▼</span>
+                                    </div>
+                                    <div class="pallet-summary">
+                                        <div class="pallet-stat">
+                                            <span>Rolek: <strong>${totalRollCount}</strong></span>
+                                        </div>
+                                        <div class="pallet-stat">
+                                            <span>Waga: <strong>${totalPalletWeight.toFixed(2)} kg</strong></span>
+                                        </div>
+                                        ${palletImages > 0 ? `
+                                            <div class="pallet-stat">
+                                                <span>Obrazki: <strong>${palletImages}</strong></span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <!-- Brak przycisku Edytuj w trybie pod torby -->
+                            </div>
+                            <div class="pallet-rolls collapsed">
+                                ${rollsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // NORMALNY TRYB Z PALETAMI
                 return `
                     <div class="pallet-container">
                         <div class="pallet-header" onclick="togglePallet(this)">
@@ -3240,7 +3327,6 @@
         // INITIALIZATION
         // =================================================================
         document.addEventListener('DOMContentLoaded', () => {
-            loadTheme();
             loadCurrentTab();
             ObrazkiApp.loadHistory();
             ObrazkiApp.loadLanguage();
