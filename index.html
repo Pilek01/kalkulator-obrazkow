@@ -737,6 +737,33 @@
             color: var(--accent);
         }
 
+        .cuts-info {
+            color: #4ecdc4;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .cuts-complete {
+            color: #4caf50;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .shortage-info {
+            font-size: 0.85rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .shortage-info.surplus {
+            color: #4ecdc4; /* turkusowy - wyjdzie więcej */
+        }
+
+        .shortage-info.deficit {
+            color: #ffc107; /* żółty - wyjdzie mniej */
+        }
+
         /* Sugestia wagi - subtelne wyróżnienie */
         .form-group input.has-suggestion::placeholder {
             color: #4ecdc4;
@@ -747,6 +774,25 @@
 
         .form-group input.has-suggestion {
             border-color: rgba(78, 205, 196, 0.5);
+        }
+
+        /* Wizualne oznaczenie rolki z sugestii */
+        .roll-item.from-suggestion {
+            border-left-color: #4ecdc4;
+        }
+
+        .roll-item.from-suggestion .roll-weight-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .suggestion-indicator {
+            font-size: 0.75rem;
+            color: #4ecdc4;
+            opacity: 0.8;
+            margin-left: 0.25rem;
+            font-weight: 700;
         }
 
         .rolls-header {
@@ -1579,7 +1625,7 @@
     </div>
 
     <footer>
-        Made by Kamil Matysek | v1.0.4
+        Made by Kamil Matysek | v1.0.7
     </footer>
 
     <!-- Modal edycji palety -->
@@ -2143,7 +2189,10 @@
                     // AUTO-INSERT INTO ROLKI APP AND SWITCH TAB
                     // Convert format: if result is 25.5, insert 25500 (multiply by 1000)
                     const valueForRolki = this.lastResult;
-                    document.getElementById('imagesRolki').value = valueForRolki;
+                    const imagesField = document.getElementById('imagesRolki');
+                    imagesField.value = valueForRolki;
+
+                    imagesField.dispatchEvent(new Event('input', { bubbles: true }));
 
                     // Switch to Rolki tab
                     setTimeout(() => {
@@ -2366,6 +2415,20 @@
                     this.updateWeightSuggestion();
                 });
 
+                this.imagesInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.form.dispatchEvent(new Event('submit'));
+                    }
+                });
+
+                this.weightInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.form.dispatchEvent(new Event('submit'));
+                    }
+                });
+
                 this.cancelEditBtn.addEventListener('click', () => this.closeEditModal());
                 this.saveEditBtn.addEventListener('click', () => this.saveEditPallet());
                 this.editPalletModal.addEventListener('click', (e) => {
@@ -2539,8 +2602,24 @@
                 const images = parseInt(this.imagesInput.value) || 0;
                 const quantity = parseInt(this.quantityInput.value) || 1;
 
-                if (!weight || weight <= 0) {
-                    alert('Proszę wprowadzić prawidłową wagę');
+                let finalWeight = weight;
+                let fromSuggestion = false;
+
+                if (!weight || isNaN(weight)) {
+                    const suggestedWeight = this.calculateSuggestedWeight(images);
+
+                    if (suggestedWeight && suggestedWeight > 0) {
+                        finalWeight = suggestedWeight;
+                        fromSuggestion = true;
+                    } else {
+                        alert('Wpisz wagę rolki lub wprowadź obrazki aby uzyskać sugestię wagi');
+                        this.weightInput.focus();
+                        return;
+                    }
+                }
+
+                if (finalWeight <= 0) {
+                    alert('Waga musi być większa niż 0');
                     return;
                 }
 
@@ -2552,7 +2631,7 @@
                 const wasEmpty = this.rolls.length === 0;
 
                 for (let i = 0; i < quantity; i++) {
-                    this.addRoll(weight, images);
+                    this.addRoll(finalWeight, images, fromSuggestion);
                 }
 
                 this.weightInput.value = '';
@@ -2576,11 +2655,12 @@
                 }
             }
 
-            addRoll(weight, images) {
+            addRoll(weight, images, fromSuggestion = false) {
                 const roll = {
                     id: Date.now() + Math.random(),
                     weight: weight,
                     images: images,
+                    fromSuggestion: fromSuggestion,
                     timestamp: new Date().toISOString()
                 };
                 this.rolls.push(roll);
@@ -2595,7 +2675,9 @@
                 const minRolls = 3 * rollsPerCut;
 
                 const validRolls = this.rolls.filter(roll =>
-                    roll.weight > 0 && roll.images > 0
+                    roll.weight > 0 &&
+                    roll.images > 0 &&
+                    roll.fromSuggestion !== true
                 );
 
                 if (validRolls.length < minRolls) {
@@ -2863,11 +2945,11 @@
                 const remaining = Math.max(orderLength - currentProgress, 0);
 
                 const unitText = orderUnit === 'images' ? 'obrazków' : 'kg';
-                this.progressCurrent.textContent = this.formatNumber(currentProgress);
-                this.progressTotal.textContent = this.formatNumber(orderLength);
+                this.progressCurrent.textContent = this.formatNumber(currentProgress, orderUnit);
+                this.progressTotal.textContent = this.formatNumber(orderLength, orderUnit);
                 this.progressUnit.textContent = unitText;
                 this.progressPercentage.textContent = `(${percentage.toFixed(1)}%)`;
-                this.progressRemaining.innerHTML = `Pozostało: <strong>${this.formatNumber(remaining)}</strong>`;
+                this.progressRemaining.innerHTML = `Pozostało: <strong>${this.formatNumber(remaining, orderUnit)}</strong>`;
                 this.progressRemainingUnit.textContent = unitText;
 
                 this.progressBar.style.width = `${percentage}%`;
@@ -2883,15 +2965,135 @@
                 } else if (percentage >= 70) {
                     this.progressBar.classList.add('warning-70');
                 }
+
+                // Calculate and display remaining cuts
+                const cutsInfo = this.calculateRemainingCuts();
+
+                if (cutsInfo) {
+                    if (cutsInfo.count === 0) {
+                        // Order completed
+                        this.progressRemaining.innerHTML = `<span class="cuts-complete">✓ Zlecenie ukończone</span>`;
+                        this.progressRemainingUnit.textContent = '';
+                    } else {
+                        // Determine proper declension for "wyrzut"
+                        let cutsWord;
+                        if (cutsInfo.count === 1) {
+                            cutsWord = 'wyrzut';
+                        } else if (cutsInfo.count >= 2 && cutsInfo.count <= 4) {
+                            cutsWord = 'wyrzuty';
+                        } else {
+                            cutsWord = 'wyrzutów';
+                        }
+
+                        let cutsText = `<span class="cuts-info">~ ${cutsInfo.count} ${cutsWord}</span>`;
+
+                        if (cutsInfo.shortage !== null && cutsInfo.shortage !== 0) {
+                            if (cutsInfo.shortage > 0) {
+                                // NADWYŻKA - wyprodukujesz więcej niż potrzeba
+                                cutsText += ` <span class="shortage-info surplus">(wyjdzie ~${this.formatNumber(cutsInfo.shortage, orderUnit)} ${cutsInfo.unit} więcej)</span>`;
+                            } else {
+                                // NIEDOBÓR - wyprodukujesz mniej niż potrzeba
+                                cutsText += ` <span class="shortage-info deficit">(wyjdzie ~${this.formatNumber(Math.abs(cutsInfo.shortage), orderUnit)} ${cutsInfo.unit} mniej)</span>`;
+                            }
+                        }
+
+                        this.progressRemaining.innerHTML = `Pozostało: <strong>${this.formatNumber(remaining, orderUnit)}</strong> ${unitText} ${cutsText}`;
+                        this.progressRemainingUnit.textContent = '';
+                    }
+                }
             }
 
-            formatNumber(num) {
+            formatNumber(num, unit = null) {
+                // Dla kg - zawsze pełna liczba bez skrótów k/M
+                if (unit === 'kg') {
+                    return num.toFixed(num % 1 === 0 ? 0 : 2);
+                }
+
+                // Dla obrazków - skróty k/M
                 if (num >= 1000000) {
                     return (num / 1000000).toFixed(2) + 'M';
                 } else if (num >= 1000) {
                     return (num / 1000).toFixed(1) + 'k';
                 }
                 return num.toFixed(num % 1 === 0 ? 0 : 2);
+            }
+
+            calculateRemainingCuts() {
+                const orderLength = parseFloat(this.orderLengthInput.value) || 0;
+                const orderUnit = this.orderUnitSelect.value;
+                const orderCompleted = parseFloat(this.orderCompletedInput.value) || 0;
+                const rollsPerCut = parseInt(this.quantityInput.value) || 1;
+                const minRolls = 3 * rollsPerCut;
+
+                if (orderLength <= 0) {
+                    return null;
+                }
+
+                const validRolls = this.rolls.filter(roll =>
+                    roll.fromSuggestion !== true &&
+                    roll.weight > 0 &&
+                    (orderUnit === 'kg' || roll.images > 0)
+                );
+
+                if (validRolls.length < minRolls) {
+                    return null;
+                }
+
+                // Calculate average per roll
+                let avgPerRoll;
+                if (orderUnit === 'images') {
+                    const totalImages = validRolls.reduce((sum, roll) => sum + roll.images, 0);
+                    avgPerRoll = totalImages / validRolls.length;
+                } else {
+                    const totalWeight = validRolls.reduce((sum, roll) => sum + roll.weight, 0);
+                    avgPerRoll = totalWeight / validRolls.length;
+                }
+
+                const valuePerCut = avgPerRoll * rollsPerCut;
+
+                if (valuePerCut <= 0) {
+                    return null;
+                }
+
+                let currentProgress = orderCompleted;
+                if (orderUnit === 'images') {
+                    currentProgress += this.rolls.reduce((sum, roll) => sum + (roll.images || 0), 0);
+                } else {
+                    currentProgress += this.rolls.reduce((sum, roll) => sum + roll.weight, 0);
+                }
+
+                const remaining = orderLength - currentProgress;
+
+                if (remaining <= 0) {
+                    return { count: 0, shortage: null, unit: orderUnit };
+                }
+
+                const exactCuts = remaining / valuePerCut;
+
+                let displayCount;
+                let shortage = null;
+
+                if (exactCuts <= 1.49) {
+                    displayCount = 1;
+                    const willProduce = valuePerCut * 1;
+                    // POPRAWKA: shortage = willProduce - remaining
+                    // Jeśli shortage > 0 → wyprodukujesz WIĘCEJ niż potrzeba (nadwyżka)
+                    // Jeśli shortage < 0 → wyprodukujesz MNIEJ niż potrzeba (niedobór)
+                    shortage = Math.round(willProduce - remaining);
+
+                    if (Math.abs(shortage) < orderLength * 0.01) {
+                        shortage = null;
+                    }
+                } else {
+                    displayCount = Math.round(exactCuts);
+                    shortage = null;
+                }
+
+                return {
+                    count: displayCount,
+                    shortage: shortage,
+                    unit: orderUnit === 'images' ? 'obrazków' : 'kg'
+                };
             }
 
             createPalletElement(pallet) {
@@ -2976,13 +3178,19 @@
                     rollNumberText = `<div class="roll-number">Rolka #${roll.orderNumber}</div>`;
                 }
 
+                const weightDisplay = roll.fromSuggestion
+                    ? `<strong>Waga:</strong> ${roll.weight.toFixed(2)} kg <span class="suggestion-indicator" title="Waga z sugestii">~</span>`
+                    : `<strong>Waga:</strong> ${roll.weight.toFixed(2)} kg`;
+
+                const itemClass = roll.fromSuggestion ? 'roll-item from-suggestion' : 'roll-item';
+
                 return `
-                    <div class="roll-item">
+                    <div class="${itemClass}">
                         <div class="roll-info">
                             ${rollNumberText}
                             <div class="roll-details">
-                                <div class="roll-detail">
-                                    <strong>Waga:</strong> ${roll.weight.toFixed(2)} kg
+                                <div class="roll-detail roll-weight-badge">
+                                    ${weightDisplay}
                                 </div>
                                 ${roll.images > 0 ? `
                                     <div class="roll-detail">
@@ -3013,7 +3221,14 @@
             loadFromStorage() {
                 try {
                     const data = localStorage.getItem('rolki_rollTrackerData');
-                    return data ? JSON.parse(data) : [];
+                    let rolls = data ? JSON.parse(data) : [];
+
+                    rolls = rolls.map(roll => ({
+                        ...roll,
+                        fromSuggestion: roll.fromSuggestion ?? false
+                    }));
+
+                    return rolls;
                 } catch (e) {
                     console.error('Błąd odczytu z localStorage:', e);
                     return [];
