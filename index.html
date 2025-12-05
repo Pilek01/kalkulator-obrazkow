@@ -1212,6 +1212,33 @@
                 grid-template-columns: 1fr !important;
             }
         }
+
+        /* Przyciski presetów gramatury */
+        .btn-preset {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 50px;
+        }
+
+        .btn-preset:hover {
+            background: rgba(0, 191, 255, 0.2);
+            border-color: #00bfff;
+            transform: translateY(-2px);
+        }
+
+        .btn-preset.active {
+            background: #00bfff;
+            color: white;
+            border-color: #00bfff;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -1229,6 +1256,9 @@
                         </button>
                         <button class="tab-button" onclick="switchTab('rolki')">
                             📦 Licznik Rolek
+                        </button>
+                        <button class="tab-button" onclick="switchTab('metry')">
+                            📐 Kalkulator Metrów
                         </button>
                     </div>
                 </div>
@@ -1648,8 +1678,183 @@
         </div>
     </div>
 
+    <!-- METRY TAB CONTENT -->
+    <div id="metryTab" class="tab-content">
+        <div class="container">
+            <div class="calculator-card">
+                <div class="calculator-header">Kalkulator Metrów</div>
+
+                <form id="calculatorFormMetry" onsubmit="MetryApp.calculate(event)">
+                    <!-- Panel konfiguracji -->
+                    <div class="config-panel" id="configPanelMetry">
+                        <div class="config-header" onclick="toggleConfigPanelMetry()">
+                            <div class="config-header-left">
+                                <span class="config-icon">⚙️</span>
+                                <span class="config-title">KONFIGURACJA</span>
+                            </div>
+                            <div class="config-header-right">
+                                <span class="config-summary" id="configSummaryMetry"></span>
+                                <span class="toggle-arrow" id="configArrowMetry">▼</span>
+                            </div>
+                        </div>
+
+                        <div class="config-body" id="configBodyMetry">
+                            <!-- Gramatura z presetami -->
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label style="font-size: 0.9rem;">📊 Gramatura (g/m²)</label>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                                    <button type="button" class="btn-preset" data-value="60" onclick="MetryApp.setGramatura(60)">60</button>
+                                    <button type="button" class="btn-preset" data-value="70" onclick="MetryApp.setGramatura(70)">70</button>
+                                    <button type="button" class="btn-preset" data-value="75" onclick="MetryApp.setGramatura(75)">75</button>
+                                    <button type="button" class="btn-preset active" data-value="80" onclick="MetryApp.setGramatura(80)">80</button>
+                                    <button type="button" class="btn-preset" data-value="85" onclick="MetryApp.setGramatura(85)">85</button>
+                                    <button type="button" class="btn-preset" data-value="90" onclick="MetryApp.setGramatura(90)">90</button>
+                                    <button type="button" class="btn-preset" data-value="110" onclick="MetryApp.setGramatura(110)">110</button>
+                                </div>
+                                <input
+                                    type="number"
+                                    id="gramaturaMetry"
+                                    name="gramatura"
+                                    step="1"
+                                    required
+                                    placeholder="80"
+                                    value="80"
+                                    style="font-size: 1rem; padding: 0.7rem;">
+                            </div>
+
+                            <!-- Szerokość -->
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="szerokoscMetry" style="font-size: 0.9rem;">📏 Szerokość papieru (cm)</label>
+                                <input
+                                    type="number"
+                                    id="szerokoscMetry"
+                                    name="szerokosc"
+                                    step="0.1"
+                                    required
+                                    placeholder="71"
+                                    value="71"
+                                    style="font-size: 1rem; padding: 0.7rem;">
+                            </div>
+
+                            <!-- Pola dla trybu Obrazki → Metry -->
+                            <div id="obrazkiFieldsMetry" style="display: none;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="walekMetry" style="font-size: 0.9rem;">🔧 Wałek (cm)</label>
+                                        <input
+                                            type="number"
+                                            id="walekMetry"
+                                            name="walek"
+                                            step="0.1"
+                                            placeholder="59"
+                                            value="59"
+                                            style="font-size: 1rem; padding: 0.7rem;">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="motywyMetry" style="font-size: 0.9rem;">🎨 Motywy</label>
+                                        <input
+                                            type="number"
+                                            id="motywyMetry"
+                                            name="motywy"
+                                            step="1"
+                                            min="1"
+                                            placeholder="2"
+                                            value="2"
+                                            style="font-size: 1rem; padding: 0.7rem;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Przełącznik trybów -->
+                    <div style="background: var(--bg-tertiary); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; border: 2px solid var(--border);">
+                        <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.8rem; color: var(--text-primary);">🔄 Tryb kalkulacji:</div>
+                        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.5rem; border-radius: 5px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,191,255,0.1)'" onmouseout="this.style.background='transparent'">
+                                <input type="radio" name="modeMetry" value="waga-metry" checked style="width: 20px; height: 20px; margin-right: 0.8rem; cursor: pointer; accent-color: #00bfff;">
+                                <span style="font-size: 1rem; font-weight: 600;">📦 Waga → Metry</span>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;">(Ile metrów dla X kg)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.5rem; border-radius: 5px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,191,255,0.1)'" onmouseout="this.style.background='transparent'">
+                                <input type="radio" name="modeMetry" value="metry-waga" style="width: 20px; height: 20px; margin-right: 0.8rem; cursor: pointer; accent-color: #00bfff;">
+                                <span style="font-size: 1rem; font-weight: 600;">📏 Metry → Waga</span>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;">(Ile będzie ważyć X metrów)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.5rem; border-radius: 5px; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,191,255,0.1)'" onmouseout="this.style.background='transparent'">
+                                <input type="radio" name="modeMetry" value="obrazki-metry" style="width: 20px; height: 20px; margin-right: 0.8rem; cursor: pointer; accent-color: #00bfff;">
+                                <span style="font-size: 1rem; font-weight: 600;">🖼️ Obrazki → Metry</span>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 0.5rem;">(Ile metrów dla X obrazków)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- DUŻE POLE WEJŚCIOWE -->
+                    <div class="form-group">
+                        <label for="inputMetry" id="inputLabelMetry">📦 Waga (kg)</label>
+                        <input
+                            type="number"
+                            id="inputMetry"
+                            name="input"
+                            step="0.01"
+                            required
+                            placeholder="500"
+                            autofocus
+                            style="font-size: 2.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 191, 255, 0.05)); border: 3px solid rgba(0, 191, 255, 0.3); font-weight: 700;">
+                    </div>
+
+                    <!-- WYNIK -->
+                    <div id="resultBoxMetry" class="result-box" style="display: none; background: linear-gradient(135deg, #00bfff 0%, #4dd0e1 100%);">
+                        <div class="result-label" id="resultLabelMetry">Wynik</div>
+                        <div class="result-value" id="resultValueMetry">0</div>
+                        <div class="result-unit" id="resultUnitMetry">m</div>
+
+                        <button type="button" class="btn" onclick="MetryApp.copyResult(event)" style="margin-top: 1.5rem; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4);">
+                            📋 Skopiuj wynik
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn">🔢 Oblicz</button>
+                </form>
+            </div>
+
+            <!-- HISTORIA -->
+            <div class="history-section">
+                <div class="calculator-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📊 Ilość obliczeń</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statTodayMetry">0</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">📏 Łącznie metrów</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #4dd0e1;" id="statTotalMetry">0 m</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem;">⚖️ Średnia gramatura</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: #00bfff;" id="statAvgMetry">0 g/m²</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-header">
+                    <div class="history-title">📜 Historia obliczeń</div>
+                    <button class="btn btn-danger" onclick="MetryApp.clearHistory()" style="width: auto; padding: 0.6rem 1.2rem;">
+                        🗑️ Wyczyść historię
+                    </button>
+                </div>
+
+                <div id="historyContainerMetry">
+                    <div class="empty-history">
+                        Brak historii obliczeń. Wykonaj pierwsze obliczenie!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
-        Made by Kamil Matysek | v1.1.0
+        Made by Kamil Matysek | v1.2.0
     </footer>
 
     <!-- Modal edycji palety -->
@@ -1781,6 +1986,30 @@
                 `Wałek: ${walek}cm | Motywy: ${motywy} | Rolek: ${rolki}`;
         }
 
+        function toggleConfigPanelMetry() {
+            const configBody = document.getElementById('configBodyMetry');
+            const configArrow = document.getElementById('configArrowMetry');
+            const isCollapsed = configBody.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                configBody.classList.remove('collapsed');
+                configArrow.classList.remove('rotated');
+                localStorage.setItem('metry_configCollapsed', 'false');
+            } else {
+                configBody.classList.add('collapsed');
+                configArrow.classList.add('rotated');
+                localStorage.setItem('metry_configCollapsed', 'true');
+            }
+        }
+
+        function updateConfigSummaryMetry() {
+            const gramatura = document.getElementById('gramaturaMetry').value || '-';
+            const szerokosc = document.getElementById('szerokoscMetry').value || '-';
+
+            document.getElementById('configSummaryMetry').textContent =
+                `Gramatura: ${gramatura} g/m² | Szerokość: ${szerokosc} cm`;
+        }
+
         // =================================================================
         // TAB SWITCHING
         // =================================================================
@@ -1790,6 +2019,7 @@
             // Hide all tabs
             document.getElementById('obrazkiTab').classList.remove('active');
             document.getElementById('rolkiTab').classList.remove('active');
+            document.getElementById('metryTab').classList.remove('active');
 
             // Remove active from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => {
@@ -1826,6 +2056,14 @@
                 document.getElementById('obrazkiTab').classList.remove('active');
                 document.getElementById('rolkiTab').classList.add('active');
                 currentTab = 'rolki';
+                document.getElementById('languageSelectorObrazki').style.display = 'none';
+                document.getElementById('helpButtonObrazki').style.display = 'none';
+            } else if (savedTab === 'metry') {
+                document.querySelector('.tab-button.active').classList.remove('active');
+                document.querySelectorAll('.tab-button')[2].classList.add('active');
+                document.getElementById('obrazkiTab').classList.remove('active');
+                document.getElementById('metryTab').classList.add('active');
+                currentTab = 'metry';
                 document.getElementById('languageSelectorObrazki').style.display = 'none';
                 document.getElementById('helpButtonObrazki').style.display = 'none';
             }
@@ -3324,6 +3562,407 @@
         }
 
         // =================================================================
+        // METRY APP
+        // =================================================================
+        const MetryApp = {
+            currentMode: 'waga-metry',
+            history: [],
+            lastResult: 0,
+
+            init() {
+                this.loadHistory();
+                this.loadConfig();
+                this.attachEventListeners();
+                this.updateStats();
+                this.loadConfigCollapsedState();
+            },
+
+            attachEventListeners() {
+                // Nasłuchuj zmian trybu
+                document.querySelectorAll('input[name="modeMetry"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.currentMode = e.target.value;
+                        this.updateUI();
+                        this.saveConfig();
+                    });
+                });
+
+                // Nasłuchuj zmian w konfiguracji
+                ['gramaturaMetry', 'szerokoscMetry', 'walekMetry', 'motywyMetry'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.addEventListener('change', () => {
+                            this.saveConfig();
+                            updateConfigSummaryMetry();
+                        });
+                    }
+                });
+
+                // Nasłuchuj zmian w polu gramatura (manualne)
+                document.getElementById('gramaturaMetry').addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    document.querySelectorAll('.btn-preset').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.value === value);
+                    });
+                });
+            },
+
+            updateUI() {
+                const inputLabel = document.getElementById('inputLabelMetry');
+                const inputField = document.getElementById('inputMetry');
+                const resultLabel = document.getElementById('resultLabelMetry');
+                const resultUnit = document.getElementById('resultUnitMetry');
+                const obrazkiFields = document.getElementById('obrazkiFieldsMetry');
+
+                // Resetuj wynik
+                document.getElementById('resultBoxMetry').style.display = 'none';
+
+                switch(this.currentMode) {
+                    case 'waga-metry':
+                        inputLabel.textContent = '📦 Waga (kg)';
+                        inputField.placeholder = '500';
+                        resultLabel.textContent = 'Metry potrzebne';
+                        resultUnit.textContent = 'm';
+                        obrazkiFields.style.display = 'none';
+                        break;
+
+                    case 'metry-waga':
+                        inputLabel.textContent = '📏 Metry (m)';
+                        inputField.placeholder = '6289';
+                        resultLabel.textContent = 'Waga papieru';
+                        resultUnit.textContent = 'kg';
+                        obrazkiFields.style.display = 'none';
+                        break;
+
+                    case 'obrazki-metry':
+                        inputLabel.textContent = '🖼️ Obrazki';
+                        inputField.placeholder = '5000';
+                        resultLabel.textContent = 'Metry potrzebne';
+                        resultUnit.textContent = 'm';
+                        obrazkiFields.style.display = 'block';
+                        break;
+                }
+
+                inputField.value = '';
+                inputField.focus();
+            },
+
+            setGramatura(value) {
+                document.getElementById('gramaturaMetry').value = value;
+                document.querySelectorAll('.btn-preset').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.value === value.toString());
+                });
+                this.saveConfig();
+                updateConfigSummaryMetry();
+            },
+
+            calculate(event) {
+                event.preventDefault();
+
+                const inputValue = parseFloat(document.getElementById('inputMetry').value);
+                const gramatura = parseFloat(document.getElementById('gramaturaMetry').value);
+                const szerokosc = parseFloat(document.getElementById('szerokoscMetry').value);
+
+                if (!inputValue || inputValue <= 0) {
+                    alert('Wartość wejściowa musi być większa od 0');
+                    return;
+                }
+
+                if (!gramatura || gramatura <= 0) {
+                    alert('Gramatura musi być większa od 0');
+                    return;
+                }
+
+                if (!szerokosc || szerokosc <= 0) {
+                    alert('Szerokość musi być większa od 0');
+                    return;
+                }
+
+                let result = 0;
+                let resultUnit = '';
+                let inputLabel = '';
+
+                switch(this.currentMode) {
+                    case 'waga-metry':
+                        // POPRAWIONY WZÓR:
+                        // 1. Waga w kg → gramy (× 1000)
+                        // 2. Powierzchnia = Waga_g / Gramatura
+                        // 3. Szerokość cm → metry (÷ 100)
+                        // 4. Metry = Powierzchnia / Szerokość_m
+                        // Uproszczony: Metry = (Waga_kg × 1000) / (Gramatura × Szerokość_m)
+                        const szerokoscM_1 = szerokosc / 100;
+                        result = (inputValue * 1000) / (gramatura * szerokoscM_1);
+                        resultUnit = 'm';
+                        inputLabel = 'Waga';
+                        break;
+
+                    case 'metry-waga':
+                        // POPRAWIONY WZÓR:
+                        // 1. Powierzchnia = Metry × Szerokość_m
+                        // 2. Waga_g = Powierzchnia × Gramatura
+                        // 3. Waga_kg = Waga_g / 1000
+                        // Uproszczony: Waga_kg = (Metry × Szerokość_m × Gramatura) / 1000
+                        const szerokoscM_2 = szerokosc / 100;
+                        result = (inputValue * szerokoscM_2 * gramatura) / 1000;
+                        resultUnit = 'kg';
+                        inputLabel = 'Metry';
+                        break;
+
+                    case 'obrazki-metry':
+                        const walek = parseFloat(document.getElementById('walekMetry').value);
+                        const motywy = parseInt(document.getElementById('motywyMetry').value);
+
+                        if (!walek || walek <= 0) {
+                            alert('Wałek musi być większy od 0');
+                            return;
+                        }
+
+                        if (!motywy || motywy <= 0) {
+                            alert('Motywy muszą być większe od 0');
+                            return;
+                        }
+
+                        // Wzór: Metry = (Obrazki / Motywy) × (Wałek / 100)
+                        // Ten wzór jest OK - pozostaje bez zmian
+                        result = (inputValue / motywy) * (walek / 100);
+                        resultUnit = 'm';
+                        inputLabel = 'Obrazki';
+                        break;
+                }
+
+                // Zaokrąglenie do pełnych wartości
+                result = Math.round(result);
+
+                this.lastResult = result;
+
+                // Wyświetl wynik
+                const resultBox = document.getElementById('resultBoxMetry');
+                const resultValue = document.getElementById('resultValueMetry');
+
+                resultBox.style.display = 'block';
+                resultValue.textContent = result.toLocaleString('pl-PL', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+
+                // Animacja
+                resultValue.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    resultValue.style.transition = 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    resultValue.style.transform = 'scale(1)';
+                }, 10);
+
+                // Zapisz w historii
+                const historyItem = {
+                    id: Date.now(),
+                    mode: this.currentMode,
+                    inputValue: inputValue,
+                    inputLabel: inputLabel,
+                    result: result,
+                    resultUnit: resultUnit,
+                    gramatura: gramatura,
+                    szerokosc: szerokosc,
+                    walek: this.currentMode === 'obrazki-metry' ? parseFloat(document.getElementById('walekMetry').value) : null,
+                    motywy: this.currentMode === 'obrazki-metry' ? parseInt(document.getElementById('motywyMetry').value) : null,
+                    timestamp: new Date().toLocaleString('pl-PL', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    })
+                };
+
+                this.history.unshift(historyItem);
+                if (this.history.length > 50) {
+                    this.history = this.history.slice(0, 50);
+                }
+
+                this.saveHistory();
+                this.renderHistory();
+                this.updateStats();
+            },
+
+            copyResult(event) {
+                const resultText = Math.round(this.lastResult).toString();
+
+                navigator.clipboard.writeText(resultText).then(() => {
+                    const btn = event.target.closest('.btn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = `✅ Skopiowano: ${resultText}`;
+                    btn.style.background = 'rgba(76, 175, 80, 0.3)';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = 'rgba(255,255,255,0.2)';
+                    }, 2000);
+                }).catch(err => console.error('Błąd kopiowania:', err));
+            },
+
+            getModeLabel(mode) {
+                const labels = {
+                    'waga-metry': '📦 Waga → Metry',
+                    'metry-waga': '📏 Metry → Waga',
+                    'obrazki-metry': '🖼️ Obrazki → Metry'
+                };
+                return labels[mode] || mode;
+            },
+
+            renderHistory() {
+                const container = document.getElementById('historyContainerMetry');
+
+                if (this.history.length === 0) {
+                    container.innerHTML = '<div class="empty-history">Brak historii obliczeń. Wykonaj pierwsze obliczenie!</div>';
+                    return;
+                }
+
+                container.innerHTML = this.history.map(item => {
+                    let detailsHtml = `
+                        <div class="history-data-item"><strong>Gramatura:</strong> ${item.gramatura} g/m²</div>
+                        <div class="history-data-item"><strong>Szerokość:</strong> ${item.szerokosc} cm</div>
+                    `;
+
+                    if (item.mode === 'obrazki-metry') {
+                        detailsHtml += `
+                            <div class="history-data-item"><strong>Wałek:</strong> ${item.walek} cm</div>
+                            <div class="history-data-item"><strong>Motywy:</strong> ${item.motywy}</div>
+                        `;
+                    }
+
+                    return `
+                        <div class="history-item">
+                            <div class="history-item-header">
+                                <div>
+                                    <div style="font-weight: 600; color: #00bfff; margin-bottom: 0.3rem;">${this.getModeLabel(item.mode)}</div>
+                                    <div class="history-item-time">📅 ${item.timestamp}</div>
+                                </div>
+                                <button class="history-item-delete" onclick="MetryApp.deleteHistoryItem(${item.id})">🗑️ Usuń</button>
+                            </div>
+                            <div class="history-item-data">
+                                <div class="history-data-item"><strong>${item.inputLabel}:</strong> ${item.inputValue.toLocaleString('pl-PL')}</div>
+                                ${detailsHtml}
+                            </div>
+                            <div class="history-result">
+                                ➡️ Wynik: ${Math.round(item.result).toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ${item.resultUnit}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            updateStats() {
+                const statToday = this.history.length;
+
+                // Suma metrów (tylko z wyników w metrach)
+                const totalMeters = Math.round(this.history
+                    .filter(item => item.resultUnit === 'm')
+                    .reduce((sum, item) => sum + item.result, 0));
+
+                // Średnia gramatura
+                const avgGramatura = this.history.length > 0
+                    ? Math.round(this.history.reduce((sum, item) => sum + item.gramatura, 0) / this.history.length)
+                    : 0;
+
+                document.getElementById('statTodayMetry').textContent = statToday;
+                document.getElementById('statTotalMetry').textContent = totalMeters.toLocaleString('pl-PL', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }) + ' m';
+                document.getElementById('statAvgMetry').textContent = avgGramatura + ' g/m²';
+            },
+
+            deleteHistoryItem(id) {
+                if (confirm('Czy na pewno chcesz usunąć to obliczenie z historii?')) {
+                    this.history = this.history.filter(item => item.id !== id);
+                    this.saveHistory();
+                    this.renderHistory();
+                    this.updateStats();
+                }
+            },
+
+            clearHistory() {
+                if (this.history.length === 0) {
+                    alert('Historia jest już pusta!');
+                    return;
+                }
+
+                if (confirm(`Czy na pewno chcesz usunąć całą historię (${this.history.length} obliczeń)?`)) {
+                    this.history = [];
+                    this.saveHistory();
+                    this.renderHistory();
+                    this.updateStats();
+                    document.getElementById('resultBoxMetry').style.display = 'none';
+                    document.getElementById('calculatorFormMetry').reset();
+                    this.setGramatura(80);
+                }
+            },
+
+            saveConfig() {
+                const config = {
+                    mode: this.currentMode,
+                    gramatura: document.getElementById('gramaturaMetry').value,
+                    szerokosc: document.getElementById('szerokoscMetry').value,
+                    walek: document.getElementById('walekMetry').value,
+                    motywy: document.getElementById('motywyMetry').value
+                };
+                localStorage.setItem('metry_config', JSON.stringify(config));
+            },
+
+            loadConfig() {
+                try {
+                    const config = JSON.parse(localStorage.getItem('metry_config'));
+                    if (config) {
+                        if (config.mode) {
+                            this.currentMode = config.mode;
+                            document.querySelector(`input[name="modeMetry"][value="${config.mode}"]`).checked = true;
+                        }
+                        if (config.gramatura) {
+                            document.getElementById('gramaturaMetry').value = config.gramatura;
+                            this.setGramatura(parseInt(config.gramatura));
+                        }
+                        if (config.szerokosc) document.getElementById('szerokoscMetry').value = config.szerokosc;
+                        if (config.walek) document.getElementById('walekMetry').value = config.walek;
+                        if (config.motywy) document.getElementById('motywyMetry').value = config.motywy;
+
+                        this.updateUI();
+                    }
+                } catch (e) {
+                    console.error('Błąd wczytywania konfiguracji Metry:', e);
+                }
+            },
+
+            loadConfigCollapsedState() {
+                try {
+                    const isCollapsed = localStorage.getItem('metry_configCollapsed') === 'true';
+                    if (isCollapsed) {
+                        document.getElementById('configBodyMetry').classList.add('collapsed');
+                        document.getElementById('configArrowMetry').classList.add('rotated');
+                    }
+                    updateConfigSummaryMetry();
+                } catch (e) {
+                    console.error('Błąd wczytywania stanu panelu konfiguracji Metry:', e);
+                }
+            },
+
+            saveHistory() {
+                localStorage.setItem('metry_history', JSON.stringify(this.history));
+            },
+
+            loadHistory() {
+                const saved = localStorage.getItem('metry_history');
+                if (saved) {
+                    try {
+                        this.history = JSON.parse(saved);
+                        this.renderHistory();
+                    } catch (e) {
+                        console.error('Błąd wczytywania historii Metry:', e);
+                        this.history = [];
+                    }
+                }
+            }
+        };
+
+        // =================================================================
         // INITIALIZATION
         // =================================================================
         document.addEventListener('DOMContentLoaded', () => {
@@ -3333,6 +3972,9 @@
             ObrazkiApp.loadConfig();
             ObrazkiApp.updateStats();
             new RollTracker();
+
+            // Inicjalizacja MetryApp
+            MetryApp.init();
 
             // Event listenery dla automatycznego zapisywania konfiguracji
             document.getElementById('walekObrazki').addEventListener('change', () => ObrazkiApp.saveConfig());
